@@ -34,7 +34,7 @@ export const loginUser = async (
 export const registerUser = async (userData: Partial<User>): Promise<User | null> => {
     try {
         const response = await axios.post(`${API_URL}/register`, userData);
-        return response.data as User;
+        return response.data.user as User; // Asegúrate de que el servidor devuelve un objeto con la propiedad 'user'
     } catch (error) {
         console.error("Error registering user:", error);
         return null;

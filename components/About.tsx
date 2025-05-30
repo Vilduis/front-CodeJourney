@@ -1,16 +1,13 @@
-"use client";
 import React from "react";
-import { Code, Users, MessageSquare } from "lucide-react";
+import { Code, Users, MessageSquare, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import { ArrowRight } from "lucide-react";
 
 const About = () => {
   return (
-    <section className="bg-gradient-to-br from-black via-gray-900 to-black/95 px-4 sm:px-6 lg:px-12 py-20">
-      <div className="container mx-auto max-w-6xl">
-        
+    <section className="bg-gradient-to-br from-black via-gray-900 to-black/95 px-4 sm:px-6 lg:px-12 py-24">
+      <div className="container mx-auto max-w-7xl">
         {/* Encabezado */}
         <div className="text-center mb-12 sm:mb-16 px-4">
           <Badge className="bg-codePrimary/20 text-codePrimary hover:bg-codePrimary/30 border-none px-3 py-1 text-sm sm:text-base mb-4">
@@ -21,8 +18,9 @@ const About = () => {
             Acerca de <span className="text-codePrimary">CodeJourney</span>
           </h1>
           <p className="text-gray-300 text-base sm:text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
-            Un espacio donde desarrolladores de todos los niveles pueden aprender, compartir y crecer profesionalmente. 
-            Publica tus posts, comenta y enriquece la comunidad con tus experiencias.
+            Un espacio donde desarrolladores de todos los niveles pueden
+            aprender, compartir y crecer profesionalmente. Publica tus posts,
+            comenta y enriquece la comunidad con tus experiencias.
           </p>
         </div>
 
@@ -34,7 +32,9 @@ const About = () => {
               Nuestra Misión
             </h2>
             <p className="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed">
-              Inspirar y empoderar a desarrolladores creando un entorno colaborativo donde el aprendizaje y la innovación técnica sean la base del crecimiento.
+              Inspirar y empoderar a desarrolladores creando un entorno
+              colaborativo donde el aprendizaje y la innovación técnica sean la
+              base del crecimiento.
             </p>
           </div>
           <div className="bg-gradient-to-t from-codePrimary/50 to-codeSecondary/50 p-6 sm:p-8 rounded-xl shadow-lg hover:scale-[1.03] transition-all duration-300">
@@ -43,7 +43,9 @@ const About = () => {
               Nuestra Visión
             </h2>
             <p className="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed">
-              Ser la comunidad líder de desarrolladores, donde cada aporte transforma la manera en que compartimos conocimientos y colaboramos en proyectos innovadores.
+              Ser la comunidad líder de desarrolladores, donde cada aporte
+              transforma la manera en que compartimos conocimientos y
+              colaboramos en proyectos innovadores.
             </p>
           </div>
         </div>
@@ -58,7 +60,8 @@ const About = () => {
             Conéctate con otros desarrolladores
           </h2>
           <p className="text-gray-300 text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-6">
-            Comparte conocimientos, explora contenido técnico y forma parte de una comunidad en constante crecimiento.
+            Comparte conocimientos, explora contenido técnico y forma parte de
+            una comunidad en constante crecimiento.
           </p>
           <div className="flex justify-center">
             <Link href="/register">
@@ -68,7 +71,6 @@ const About = () => {
             </Link>
           </div>
         </div>
-
       </div>
     </section>
   );

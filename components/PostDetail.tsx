@@ -2,11 +2,22 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { getPost } from "@/services/postService";
-import { createComment, updateComment, deleteComment } from "@/services/commentService";
+import {
+  createComment,
+  updateComment,
+  deleteComment,
+} from "@/services/commentService";
 import { Post } from "../types/posts";
 import Image from "next/image";
 import { MessageSquare, ArrowLeft, Pencil, Trash2 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -78,7 +89,7 @@ const PostDetail = ({ postId }: PostDetailProps) => {
       }
 
       const result = await createComment(token, postId, {
-        content: comment.trim()
+        content: comment.trim(),
       });
 
       if (result) {
@@ -153,19 +164,24 @@ const PostDetail = ({ postId }: PostDetailProps) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-4 border-t-codePrimary border-b-transparent border-l-transparent border-r-transparent"></div>
       </div>
     );
   }
 
   if (error || !post) {
-    return <div className="text-center text-red-500">{error || "Post no encontrado"}</div>;
+    return (
+      <div className="text-center text-red-500">
+        {error || "Post no encontrado"}
+      </div>
+    );
   }
 
-  const author = typeof post.author === "string" 
-    ? { name: post.author, lastName: "" } 
-    : post.author || { name: "Usuario", lastName: "" };
+  const author =
+    typeof post.author === "string"
+      ? { name: post.author, lastName: "" }
+      : post.author || { name: "Usuario", lastName: "" };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -215,10 +231,10 @@ const PostDetail = ({ postId }: PostDetailProps) => {
               />
             </div>
           )}
-          <CardTitle className="text-3xl font-bold text-white mb-4">
+          <CardTitle className="text-2xl font-bold text-white mb-4">
             {post.title}
           </CardTitle>
-          <CardDescription className="text-lg text-white/90 whitespace-pre-wrap">
+          <CardDescription className="text-md text-white/90 whitespace-pre-wrap">
             {post.content}
           </CardDescription>
         </CardContent>
@@ -248,7 +264,13 @@ const PostDetail = ({ postId }: PostDetailProps) => {
               </div>
             ) : (
               <div className="text-center text-white/70 py-4 ">
-               <Link href="/login" className="bg-codePrimary hover:bg-codePrimary/80 px-2 py-2 rounded-md">Inicia sesión</Link> para comentar
+                <Link
+                  href="/login"
+                  className="bg-codePrimary hover:bg-codePrimary/80 px-2 py-2 rounded-md"
+                >
+                  Inicia sesión
+                </Link>{" "}
+                para comentar
               </div>
             )}
 
@@ -259,11 +281,13 @@ const PostDetail = ({ postId }: PostDetailProps) => {
                     typeof comment.author === "string"
                       ? { name: comment.author, lastName: "" }
                       : comment.author || { name: "Usuario", lastName: "" };
-                  
-                  const isCommentAuthor = user && (
-                    (typeof comment.author === "string" && comment.author === user._id) ||
-                    (typeof comment.author !== "string" && comment.author._id === user._id)
-                  );
+
+                  const isCommentAuthor =
+                    user &&
+                    ((typeof comment.author === "string" &&
+                      comment.author === user._id) ||
+                      (typeof comment.author !== "string" &&
+                        comment.author._id === user._id));
 
                   return (
                     <div
@@ -273,7 +297,8 @@ const PostDetail = ({ postId }: PostDetailProps) => {
                       <div className="flex items-center justify-between text-sm text-white/70 mb-2">
                         <div className="flex items-center">
                           <span className="font-semibold">
-                            {commentAuthor?.name || "Usuario"} {commentAuthor?.lastName || ""}
+                            {commentAuthor?.name || "Usuario"}{" "}
+                            {commentAuthor?.lastName || ""}
                           </span>
                           <span className="mx-2">•</span>
                           <span>
@@ -314,13 +339,15 @@ const PostDetail = ({ postId }: PostDetailProps) => {
                           </div>
                         )}
                       </div>
-                      <p className="text-white/90">{comment.content}</p>
+                      <p className="text-sm text-white/90">{comment.content}</p>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-white/50 text-center">No hay comentarios aún.</p>
+              <p className="text-sm text-white/50 text-center">
+                No hay comentarios aún.
+              </p>
             )}
           </div>
         </CardFooter>

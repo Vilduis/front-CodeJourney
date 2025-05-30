@@ -14,7 +14,6 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth"; // Hook de autenticación
 import { toast } from "sonner";
 
-
 // Definimos el esquema Zod para email y password
 const formSchema = z.object({
   email: z.string().email({ message: "Por favor ingrese un email válido" }),
@@ -41,7 +40,7 @@ export function LoginForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const success = await loginUser(values.email, values.password);
-      
+
       if (success) {
         router.push("/");
       } else {
@@ -49,14 +48,14 @@ export function LoginForm({
         // por el contexto de autenticación (mostrado en toast)
         form.setError("root", {
           type: "manual",
-          message: authError || "Error al iniciar sesión"
+          message: authError || "Error al iniciar sesión",
         });
       }
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       form.setError("root", {
         type: "manual",
-        message: "Error al conectar con el servidor"
+        message: "Error al conectar con el servidor",
       });
       toast.error("Error al conectar con el servidor");
     }
@@ -131,12 +130,14 @@ export function LoginForm({
               </div>
 
               {/* Botón de login */}
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full bg-codePrimary hover:bg-codePrimary/70"
                 disabled={form.formState.isSubmitting}
               >
-                {form.formState.isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
+                {form.formState.isSubmitting
+                  ? "Iniciando sesión..."
+                  : "Iniciar sesión"}
               </Button>
 
               {/* Link de registro */}
@@ -161,7 +162,7 @@ export function LoginForm({
       </Card>
 
       {/* Footer con términos y condiciones */}
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
+      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:text-white [&_a]:underline [&_a]:underline-offset-4 [&_a]:transition-colors hover:[&_a]:text-codePrimary">
         Al iniciar sesión, aceptas nuestros <a href="#">Términos de Servicio</a>{" "}
         y <a href="#">Política de Privacidad</a>.
       </div>

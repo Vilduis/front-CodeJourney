@@ -33,12 +33,12 @@ const Navbar = () => {
   // Manejo seguro de la información del usuario
   const getUserInfo = () => {
     if (!user) return { fullName: "", email: "", initial: "" };
-    
+
     const fullName = `${user.name || ""} ${user.lastName || ""}`.trim();
     return {
       fullName: fullName || "Usuario",
       email: user.email || "",
-      initial: fullName ? fullName.charAt(0).toUpperCase() : "U"
+      initial: fullName ? fullName.charAt(0).toUpperCase() : "U",
     };
   };
 
@@ -53,7 +53,9 @@ const Navbar = () => {
             <div className="flex items-center space-x-3">
               <Link href="/" className="flex items-center space-x-3">
                 <Image src="/logo.png" alt="logo" width={40} height={40} />
-                <span className="text-xl font-bold tracking-wide">CodeJourney</span>
+                <span className="text-xl font-bold tracking-wide">
+                  CodeJourney
+                </span>
               </Link>
             </div>
             <div className="animate-pulse bg-white/20 h-8 w-8 rounded-full"></div>
@@ -71,7 +73,9 @@ const Navbar = () => {
           <div className="flex items-center space-x-3">
             <Link href="/" className="flex items-center space-x-3">
               <Image src="/logo.png" alt="logo" width={40} height={40} />
-              <span className="text-xl font-bold tracking-wide">CodeJourney</span>
+              <span className="text-xl font-bold tracking-wide">
+                CodeJourney
+              </span>
             </Link>
           </div>
 
@@ -179,7 +183,7 @@ const Navbar = () => {
           <Link href="/" passHref>
             <Button
               variant="ghost"
-              className="flex items-center space-x-2 text-lg hover:text-codeSecondary"
+              className="flex items-center space-x-2 text-md hover:text-codeSecondary"
               onClick={() => setIsOpen(false)}
             >
               <span>Inicio</span>
@@ -188,7 +192,7 @@ const Navbar = () => {
           <Link href="/posts" passHref>
             <Button
               variant="ghost"
-              className="flex items-center space-x-2 text-lg hover:text-codeSecondary"
+              className="flex items-center space-x-2 text-md hover:text-codeSecondary"
               onClick={() => setIsOpen(false)}
             >
               <span>Posts</span>
@@ -197,7 +201,7 @@ const Navbar = () => {
           <Link href="/about" passHref>
             <Button
               variant="ghost"
-              className="flex items-center space-x-2 text-lg hover:text-codeSecondary"
+              className="flex items-center space-x-2 text-md hover:text-codeSecondary"
               onClick={() => setIsOpen(false)}
             >
               <span>Acerca de</span>
@@ -220,7 +224,7 @@ const Navbar = () => {
               </div>
               <Button
                 variant="ghost"
-                className="flex items-center space-x-2 text-lg hover:text-codeSecondary"
+                className="flex items-center space-x-2 text-md hover:text-codeSecondary"
                 onClick={() => {
                   setIsProfileOpen(true);
                   setIsOpen(false);
@@ -230,7 +234,7 @@ const Navbar = () => {
               </Button>
               <Button
                 variant="ghost"
-                className="flex items-center space-x-2 text-lg hover:text-codeSecondary"
+                className="flex items-center space-x-2 text-md hover:text-codeSecondary"
                 onClick={() => {
                   handleLogout();
                   setIsOpen(false);
@@ -244,7 +248,7 @@ const Navbar = () => {
               <Link href="/register" passHref>
                 <Button
                   variant="ghost"
-                  className="flex items-center space-x-2 text-lg hover:text-codeSecondary"
+                  className="flex items-center space-x-2 text-md hover:text-codeSecondary"
                   onClick={() => setIsOpen(false)}
                 >
                   <UserPlus size={20} />
@@ -254,7 +258,7 @@ const Navbar = () => {
               <Link href="/login" passHref>
                 <Button
                   variant="ghost"
-                  className="flex items-center space-x-2 text-lg hover:text-codeSecondary"
+                  className="flex items-center space-x-2 text-md hover:text-codeSecondary"
                   onClick={() => setIsOpen(false)}
                 >
                   <LogIn size={20} />

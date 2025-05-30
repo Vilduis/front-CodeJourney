@@ -70,19 +70,18 @@ const PostCard = ({ post }: { post: Post }) => {
         <CardContent>
           {/* Imagen del post (se muestra primero) */}
           {post.image && (
-            <div className="mb-4">
+            <div className="relative w-full h-[200px] mb-4">
               <Image
                 src={post.image}
                 alt={post.title}
+                fill
                 className="object-cover rounded-lg"
-                width={700}
-                height={500}
                 unoptimized
               />
             </div>
           )}
           {/* Título y descripción */}
-          <CardTitle className="text-2xl font-bold text-white line-clamp-2">
+          <CardTitle className="text-lg font-bold text-white line-clamp-2">
             {post.title}
           </CardTitle>
           <CardDescription className="mt-2 text-white line-clamp-3">
@@ -94,25 +93,34 @@ const PostCard = ({ post }: { post: Post }) => {
           <div className="flex items-center justify-between w-full mt-2">
             <div className="flex items-center text-white/70 text-sm">
               <MessageSquare className="mr-1 h-4 w-4" />
-              <span>{post.comments?.length || 0} comentarios</span>
+              <span>{post.comments?.length || 0}</span>
             </div>
             <div className="flex gap-2">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white hover:bg-white/10 hover:text-white"
+                  >
                     <Eye className="h-4 w-4 mr-2" />
                     Ver contenido
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-gradient-to-br from-codePrimary/90 to-codeSecondary/90 border-none text-white max-w-3xl">
+                <DialogContent className="bg-gradient-to-br from-codePrimary/90 to-codeSecondary/90 border-none text-white">
                   <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold">{post.title}</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold">
+                      {post.title}
+                    </DialogTitle>
                     <DialogDescription className="text-white/70">
-                      Por {author.name} {author.lastName} • {new Date(post.createdAt || "").toLocaleDateString("es-ES")}
+                      Por {author.name} {author.lastName} •{" "}
+                      {new Date(post.createdAt || "").toLocaleDateString(
+                        "es-ES"
+                      )}
                     </DialogDescription>
                   </DialogHeader>
                   {post.image && (
-                    <div className="relative h-[400px] w-full mb-4">
+                    <div className="relative h-[200px] w-full mb-4">
                       <Image
                         src={post.image}
                         alt={post.title}
@@ -122,11 +130,17 @@ const PostCard = ({ post }: { post: Post }) => {
                       />
                     </div>
                   )}
-                  <div className="text-white whitespace-pre-wrap">{post.content}</div>
+                  <div className="text-sm text-white whitespace-pre-wrap">
+                    {post.content}
+                  </div>
                 </DialogContent>
               </Dialog>
               <Link href={`/posts/${post._id}`}>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-white/10 hover:text-white"
+                >
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Comentar
                 </Button>
@@ -159,15 +173,15 @@ export default function Listpost() {
   // Spinner de carga
   if (!posts) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-4 border-t-codePrimary border-b-transparent border-l-transparent border-r-transparent"></div>
       </div>
     );
   }
 
   // Calcular el total de páginas
   const totalPages = Math.ceil((posts?.length || 0) / postsPerPage);
-  
+
   // Obtener los posts de la página actual
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
@@ -225,7 +239,8 @@ export default function Listpost() {
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                        if (currentPage < totalPages)
+                          setCurrentPage(currentPage + 1);
                       }}
                     />
                   </PaginationItem>

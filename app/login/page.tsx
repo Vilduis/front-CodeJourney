@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { LoginForm } from "@/components/auth/Login"; 
+import { LoginForm } from "@/components/auth/Login";
 
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -16,7 +16,11 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   }, [isLoading, user, router]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-4 border-t-codePrimary border-b-transparent border-l-transparent border-r-transparent"></div>
+      </div>
+    );
   }
 
   return <>{children}</>;

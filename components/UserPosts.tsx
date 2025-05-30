@@ -3,9 +3,22 @@
 import { useEffect, useState } from "react";
 import { getPostsByUser, deletePost, updatePost } from "@/services/postService";
 import { Post } from "@/types/posts";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  MessageSquare,
+  Pencil,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +32,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { AxiosError } from "axios";
 
@@ -40,7 +54,7 @@ const UserPosts = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isUpdateLoading, setIsUpdateLoading] = useState(false);
 
-    const fetchUserPosts = async () => {
+  const fetchUserPosts = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
@@ -52,7 +66,7 @@ const UserPosts = () => {
       const userPosts = await getPostsByUser(token);
       if (userPosts) {
         setPosts(userPosts);
-        } else {
+      } else {
         setError("No se pudieron cargar los posts");
       }
     } catch (err) {
@@ -61,7 +75,7 @@ const UserPosts = () => {
     } finally {
       setLoading(false);
     }
-    };
+  };
 
   useEffect(() => {
     fetchUserPosts();
@@ -105,7 +119,7 @@ const UserPosts = () => {
     try {
       setIsUpdateLoading(true);
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         toast.error("Sesión expirada. Por favor, vuelve a iniciar sesión.");
         setIsEditDialogOpen(false);
@@ -113,7 +127,7 @@ const UserPosts = () => {
       }
 
       // Verificamos que el post exista en la lista actual
-      const postToUpdate = posts.find(p => p._id === editingPost._id);
+      const postToUpdate = posts.find((p) => p._id === editingPost._id);
       if (!postToUpdate) {
         toast.error("No se encontró el post a editar");
         setIsEditDialogOpen(false);
@@ -124,9 +138,9 @@ const UserPosts = () => {
         _id: editingPost._id,
         title: editingPost.title.trim(),
         content: editingPost.content.trim(),
-        image: editingPost.image.trim()
+        image: editingPost.image.trim(),
       });
-      
+
       if (updatedPost) {
         toast.success("Post actualizado exitosamente");
         setIsEditDialogOpen(false);
@@ -135,10 +149,13 @@ const UserPosts = () => {
     } catch (error) {
       console.error("Error updating post:", error);
       if (error instanceof AxiosError) {
-        const errorMessage = error.response?.data?.error || 
-          (error.response?.status === 403 ? "No tienes permiso para editar este post" : "Error al actualizar el post");
+        const errorMessage =
+          error.response?.data?.error ||
+          (error.response?.status === 403
+            ? "No tienes permiso para editar este post"
+            : "Error al actualizar el post");
         toast.error(errorMessage);
-        
+
         if (error.response?.status === 403) {
           setIsEditDialogOpen(false);
           await fetchUserPosts();
@@ -159,9 +176,7 @@ const UserPosts = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setEditingPost((prev) => 
-      prev ? { ...prev, [name]: value } : null
-    );
+    setEditingPost((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
   // Cálculos para la paginación
@@ -180,18 +195,14 @@ const UserPosts = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[200px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-4 border-t-codePrimary border-b-transparent border-l-transparent border-r-transparent"></div>
       </div>
     );
   }
 
   if (error) {
-    return (
-      <div className="text-center text-red-500 py-4">
-        {error}
-      </div>
-    );
+    return <div className="text-center text-red-500 py-4">{error}</div>;
   }
 
   if (posts.length === 0) {
@@ -206,7 +217,10 @@ const UserPosts = () => {
     <div className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {currentPosts.map((post) => (
-          <Card key={post._id} className="bg-gradient-to-br from-codePrimary/50 to-codeSecondary/50">
+          <Card
+            key={post._id}
+            className="bg-gradient-to-br from-codePrimary/50 to-codeSecondary/50"
+          >
             <CardHeader>
               <CardTitle className="text-xl font-bold text-white line-clamp-2">
                 {post.title}
@@ -219,13 +233,13 @@ const UserPosts = () => {
                 })}
               </CardDescription>
             </CardHeader>
-            
+
             <CardContent>
               {post.image && (
                 <div className="relative h-48 mb-4">
                   <Image
-            src={post.image}
-            alt={post.title}
+                    src={post.image}
+                    alt={post.title}
                     fill
                     className="rounded-lg object-cover"
                     unoptimized
@@ -240,7 +254,7 @@ const UserPosts = () => {
                 <MessageSquare className="h-5 w-5 mr-2" />
                 <span>{post.comments?.length || 0} comentarios</span>
               </div>
-              
+
               <div className="flex space-x-2">
                 <Button
                   variant="ghost"
@@ -265,28 +279,22 @@ const UserPosts = () => {
                     <DialogHeader>
                       <DialogTitle>¿Estás seguro?</DialogTitle>
                       <DialogDescription>
-                        Esta acción no se puede deshacer. Se eliminará permanentemente el post
-                        y todos sus comentarios.
+                        Esta acción no se puede deshacer. Se eliminará
+                        permanentemente el post y todos sus comentarios.
                       </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                      <Button
-                        variant="ghost"
-                        onClick={() => {
-                          const dialogTrigger = document.querySelector('[role="dialog"]');
-                          if (dialogTrigger) {
-                            (dialogTrigger as HTMLElement).click();
-                          }
-                        }}
-                      >
-                        Cancelar
-                      </Button>
+                      <DialogClose asChild>
+                        <Button variant="ghost">Cancelar</Button>
+                      </DialogClose>
+
                       <Button
                         variant="destructive"
                         onClick={() => {
                           if (post._id) {
                             handleDelete(post._id);
-                            const dialogTrigger = document.querySelector('[role="dialog"]');
+                            const dialogTrigger =
+                              document.querySelector('[role="dialog"]');
                             if (dialogTrigger) {
                               (dialogTrigger as HTMLElement).click();
                             }
@@ -308,7 +316,9 @@ const UserPosts = () => {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-codePrimary/90 to-codeSecondary/90">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white">Editar post</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-white">
+              Editar post
+            </DialogTitle>
             <DialogDescription className="text-gray-300">
               Realiza los cambios necesarios en tu post
             </DialogDescription>
@@ -316,7 +326,9 @@ const UserPosts = () => {
 
           <form onSubmit={handleUpdate} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title" className="text-white">Título</Label>
+              <Label htmlFor="title" className="text-white">
+                Título
+              </Label>
               <Input
                 id="title"
                 name="title"
@@ -329,7 +341,9 @@ const UserPosts = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="image" className="text-white">URL de la imagen</Label>
+              <Label htmlFor="image" className="text-white">
+                URL de la imagen
+              </Label>
               <Input
                 id="image"
                 name="image"
@@ -342,7 +356,9 @@ const UserPosts = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="content" className="text-white">Contenido</Label>
+              <Label htmlFor="content" className="text-white">
+                Contenido
+              </Label>
               <Textarea
                 id="content"
                 name="content"
