@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { registerUser, validateEmail } from "@/services/userService";
 import { toast } from "sonner";
 
@@ -54,6 +55,8 @@ export function RegisterForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   // Configuramos React Hook Form con Zod
+  const router = useRouter();
+
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -87,7 +90,7 @@ export function RegisterForm({
       const result = await registerUser(payload);
       if (result) {
         toast.success("Usuario registrado exitosamente!");
-        form.reset(); // Limpia el formulario tras el registro exitoso
+        router.push("/login");
       } else {
         toast.error("Error al registrar usuario");
       }
@@ -193,8 +196,8 @@ export function RegisterForm({
                 )}
               />
               {/* Botón de envío */}
-              <Button type="submit" className="w-full bg-codePrimary hover:bg-codePrimary/70">
-                Registrarme
+              <Button type="submit" disabled={form.formState.isSubmitting} className="w-full bg-codePrimary hover:bg-codePrimary/70">
+                {form.formState.isSubmitting ? "Registrando..." : "Registrarme"}
               </Button>
             </form>
           </Form>
