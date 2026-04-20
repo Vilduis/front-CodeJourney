@@ -2,11 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { getPost } from "@/services/postService";
-import {
-  createComment,
-  updateComment,
-  deleteComment,
-} from "@/services/commentService";
+import { createComment, updateComment, deleteComment } from "@/services/commentService";
 import { Post } from "../types/posts";
 import Image from "next/image";
 import { MessageSquare, ArrowLeft, Pencil, Trash2 } from "lucide-react";
@@ -32,6 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { formatDate, getAuthor } from "@/lib/utils";
 
 interface PostDetailProps {
   postId: string;
@@ -39,7 +36,7 @@ interface PostDetailProps {
 
 const PostDetail = ({ postId }: PostDetailProps) => {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -57,9 +54,8 @@ const PostDetail = ({ postId }: PostDetailProps) => {
       } else {
         setError("No se pudo cargar el post");
       }
-    } catch (err) {
+    } catch {
       setError("Error al cargar el post");
-      console.error("Error fetching post:", err);
     } finally {
       setLoading(false);
     }
@@ -74,33 +70,27 @@ const PostDetail = ({ postId }: PostDetailProps) => {
       toast.error("Debes iniciar sesión para comentar");
       return;
     }
-
     if (!comment.trim()) {
       toast.error("El comentario no puede estar vacío");
+      return;
+    }
+    if (!token) {
+      toast.error("Sesión expirada");
       return;
     }
 
     try {
       setIsSubmitting(true);
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("No se encontró el token de autenticación");
-        return;
-      }
-
-      const result = await createComment(token, postId, {
-        content: comment.trim(),
-      });
+      const result = await createComment(token, postId, { content: comment.trim() });
 
       if (result) {
         toast.success("Comentario añadido exitosamente");
         setComment("");
-        fetchPost(); // Recargar el post para mostrar el nuevo comentario
+        fetchPost();
       } else {
         toast.error("Error al añadir el comentario");
       }
-    } catch (error) {
-      console.error("Error submitting comment:", error);
+    } catch {
       toast.error("Error al añadir el comentario");
     } finally {
       setIsSubmitting(false);
@@ -108,19 +98,11 @@ const PostDetail = ({ postId }: PostDetailProps) => {
   };
 
   const handleEditComment = async () => {
-    if (!editingComment || !user) return;
+    if (!editingComment || !user || !token) return;
 
     try {
       setIsSubmitting(true);
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("No se encontró el token de autenticación");
-        return;
-      }
-
-      const success = await updateComment(token, editingComment, {
-        content: editCommentContent,
-      });
+      const success = await updateComment(token, editingComment, { content: editCommentContent });
 
       if (success) {
         toast.success("Comentario actualizado exitosamente");
@@ -131,8 +113,7 @@ const PostDetail = ({ postId }: PostDetailProps) => {
       } else {
         toast.error("Error al actualizar el comentario");
       }
-    } catch (error) {
-      console.error("Error updating comment:", error);
+    } catch {
       toast.error("Error al actualizar el comentario");
     } finally {
       setIsSubmitting(false);
@@ -140,15 +121,9 @@ const PostDetail = ({ postId }: PostDetailProps) => {
   };
 
   const handleDeleteComment = async (commentId: string) => {
-    if (!user) return;
+    if (!user || !token) return;
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("No se encontró el token de autenticación");
-        return;
-      }
-
       const success = await deleteComment(token, commentId);
       if (success) {
         toast.success("Comentario eliminado exitosamente");
@@ -156,8 +131,7 @@ const PostDetail = ({ postId }: PostDetailProps) => {
       } else {
         toast.error("Error al eliminar el comentario");
       }
-    } catch (error) {
-      console.error("Error deleting comment:", error);
+    } catch {
       toast.error("Error al eliminar el comentario");
     }
   };
@@ -171,17 +145,10 @@ const PostDetail = ({ postId }: PostDetailProps) => {
   }
 
   if (error || !post) {
-    return (
-      <div className="text-center text-red-500">
-        {error || "Post no encontrado"}
-      </div>
-    );
+    return <div className="text-center text-red-500">{error || "Post no encontrado"}</div>;
   }
 
-  const author =
-    typeof post.author === "string"
-      ? { name: post.author, lastName: "" }
-      : post.author || { name: "Usuario", lastName: "" };
+  const author = getAuthor(post.author);
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -199,21 +166,13 @@ const PostDetail = ({ postId }: PostDetailProps) => {
         <CardHeader>
           <div className="flex items-center gap-3 mb-4">
             <div className="flex items-center justify-center w-12 h-12 bg-blue-500 text-white font-semibold rounded-full">
-              {author?.name?.charAt(0) || "U"}
+              {author.name.charAt(0) || "U"}
             </div>
             <div>
               <div className="text-lg font-bold text-white">
-                {author?.name || "Usuario"} {author?.lastName || ""}
+                {author.name} {author.lastName}
               </div>
-              <div className="text-sm text-gray-300">
-                {post.createdAt
-                  ? new Date(post.createdAt).toLocaleDateString("es-ES", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })
-                  : "Fecha desconocida"}
-              </div>
+              <div className="text-sm text-gray-300">{formatDate(post.createdAt)}</div>
             </div>
           </div>
         </CardHeader>
@@ -231,9 +190,7 @@ const PostDetail = ({ postId }: PostDetailProps) => {
               />
             </div>
           )}
-          <CardTitle className="text-2xl font-bold text-white mb-4">
-            {post.title}
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold text-white mb-4">{post.title}</CardTitle>
           <CardDescription className="text-md text-white/90 whitespace-pre-wrap">
             {post.content}
           </CardDescription>
@@ -263,11 +220,8 @@ const PostDetail = ({ postId }: PostDetailProps) => {
                 </Button>
               </div>
             ) : (
-              <div className="text-center text-white/70 py-4 ">
-                <Link
-                  href="/login"
-                  className="bg-codePrimary hover:bg-codePrimary/80 px-2 py-2 rounded-md"
-                >
+              <div className="text-center text-white/70 py-4">
+                <Link href="/login" className="bg-codePrimary hover:bg-codePrimary/80 px-2 py-2 rounded-md">
                   Inicia sesión
                 </Link>{" "}
                 para comentar
@@ -276,43 +230,20 @@ const PostDetail = ({ postId }: PostDetailProps) => {
 
             {post.comments && post.comments.length > 0 ? (
               <div className="space-y-4">
-                {post.comments.map((comment) => {
-                  const commentAuthor =
-                    typeof comment.author === "string"
-                      ? { name: comment.author, lastName: "" }
-                      : comment.author || { name: "Usuario", lastName: "" };
-
-                  const isCommentAuthor =
-                    user &&
-                    ((typeof comment.author === "string" &&
-                      comment.author === user._id) ||
-                      (typeof comment.author !== "string" &&
-                        comment.author._id === user._id));
+                {post.comments.map((c) => {
+                  const commentAuthor = getAuthor(c.author);
+                  const commentAuthorId = typeof c.author === "string" ? c.author : c.author._id;
+                  const isCommentAuthor = user && commentAuthorId === user._id;
 
                   return (
-                    <div
-                      key={comment._id}
-                      className="bg-white/10 rounded-lg p-4 backdrop-blur-sm"
-                    >
+                    <div key={c._id} className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
                       <div className="flex items-center justify-between text-sm text-white/70 mb-2">
                         <div className="flex items-center">
                           <span className="font-semibold">
-                            {commentAuthor?.name || "Usuario"}{" "}
-                            {commentAuthor?.lastName || ""}
+                            {commentAuthor.name} {commentAuthor.lastName}
                           </span>
                           <span className="mx-2">•</span>
-                          <span>
-                            {comment.createdAt
-                              ? new Date(comment.createdAt).toLocaleDateString(
-                                  "es-ES",
-                                  {
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                  }
-                                )
-                              : "Fecha desconocida"}
-                          </span>
+                          <span>{formatDate(c.createdAt)}</span>
                         </div>
                         {isCommentAuthor && (
                           <div className="flex space-x-2">
@@ -321,8 +252,8 @@ const PostDetail = ({ postId }: PostDetailProps) => {
                               size="icon"
                               className="text-white hover:bg-white/10"
                               onClick={() => {
-                                setEditingComment(comment._id!);
-                                setEditCommentContent(comment.content);
+                                setEditingComment(c._id!);
+                                setEditCommentContent(c.content);
                                 setIsEditDialogOpen(true);
                               }}
                             >
@@ -332,22 +263,20 @@ const PostDetail = ({ postId }: PostDetailProps) => {
                               variant="ghost"
                               size="icon"
                               className="text-white hover:bg-white/10"
-                              onClick={() => handleDeleteComment(comment._id!)}
+                              onClick={() => handleDeleteComment(c._id!)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                         )}
                       </div>
-                      <p className="text-sm text-white/90">{comment.content}</p>
+                      <p className="text-sm text-white/90">{c.content}</p>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-sm text-white/50 text-center">
-                No hay comentarios aún.
-              </p>
+              <p className="text-sm text-white/50 text-center">No hay comentarios aún.</p>
             )}
           </div>
         </CardFooter>
@@ -357,9 +286,7 @@ const PostDetail = ({ postId }: PostDetailProps) => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar comentario</DialogTitle>
-            <DialogDescription>
-              Realiza los cambios necesarios en tu comentario.
-            </DialogDescription>
+            <DialogDescription>Realiza los cambios necesarios en tu comentario.</DialogDescription>
           </DialogHeader>
           <Textarea
             value={editCommentContent}

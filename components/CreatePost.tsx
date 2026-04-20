@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 const CreatePost = () => {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -21,27 +21,22 @@ const CreatePost = () => {
     image: "",
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
+    if (!token || !user?._id) {
+      toast.error("Debes iniciar sesión para crear un post");
+      return;
+    }
+
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      
-      const newPost = await createPost(token!, {
-        ...formData,
-        author: user!._id,
-      });
+      const newPost = await createPost(token, { ...formData, author: user._id });
 
       if (newPost) {
         toast.success("Post creado exitosamente");
@@ -50,8 +45,7 @@ const CreatePost = () => {
       } else {
         toast.error("Error al crear el post");
       }
-    } catch (error) {
-      console.error("Error creating post:", error);
+    } catch {
       toast.error("Error al crear el post");
     } finally {
       setLoading(false);

@@ -31,14 +31,11 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { formatDate, getAuthor } from "@/lib/utils";
 
-// Componente para cada publicación
 const PostCard = ({ post }: { post: Post }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const author =
-    typeof post.author === "string"
-      ? { name: post.author, lastName: "" }
-      : post.author;
+  const author = getAuthor(post.author);
 
   return (
     <>
@@ -46,7 +43,6 @@ const PostCard = ({ post }: { post: Post }) => {
         <CardHeader>
           <div className="flex flex-col">
             <div className="flex items-center gap-3">
-              {/* Inicial del autor */}
               <div className="flex items-center justify-center w-10 h-10 bg-blue-500 text-white font-semibold rounded-full">
                 {author.name.charAt(0)}
               </div>
@@ -54,21 +50,11 @@ const PostCard = ({ post }: { post: Post }) => {
                 {author.name} {author.lastName}
               </div>
             </div>
-            {/* Fecha de creación formateada */}
-            <div className="text-sm text-gray-400 mt-1">
-              {post.createdAt
-                ? new Date(post.createdAt).toLocaleDateString("es-ES", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })
-                : "Fecha desconocida"}
-            </div>
+            <div className="text-sm text-gray-400 mt-1">{formatDate(post.createdAt)}</div>
           </div>
         </CardHeader>
 
         <CardContent>
-          {/* Imagen del post (se muestra primero) */}
           {post.image && (
             <div className="relative w-full h-[200px] mb-4">
               <Image
@@ -80,13 +66,8 @@ const PostCard = ({ post }: { post: Post }) => {
               />
             </div>
           )}
-          {/* Título y descripción */}
-          <CardTitle className="text-lg font-bold text-white line-clamp-2">
-            {post.title}
-          </CardTitle>
-          <CardDescription className="mt-2 text-white line-clamp-3">
-            {post.content}
-          </CardDescription>
+          <CardTitle className="text-lg font-bold text-white line-clamp-2">{post.title}</CardTitle>
+          <CardDescription className="mt-2 text-white line-clamp-3">{post.content}</CardDescription>
         </CardContent>
 
         <CardFooter>
@@ -98,25 +79,16 @@ const PostCard = ({ post }: { post: Post }) => {
             <div className="flex gap-2">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-white hover:bg-white/10 hover:text-white"
-                  >
+                  <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
                     <Eye className="h-4 w-4 mr-2" />
                     Ver contenido
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-gradient-to-br from-codePrimary/90 to-codeSecondary/90 border-none text-white">
                   <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold">
-                      {post.title}
-                    </DialogTitle>
+                    <DialogTitle className="text-2xl font-bold">{post.title}</DialogTitle>
                     <DialogDescription className="text-white/70">
-                      Por {author.name} {author.lastName} •{" "}
-                      {new Date(post.createdAt || "").toLocaleDateString(
-                        "es-ES"
-                      )}
+                      Por {author.name} {author.lastName} • {formatDate(post.createdAt)}
                     </DialogDescription>
                   </DialogHeader>
                   {post.image && (
@@ -130,17 +102,11 @@ const PostCard = ({ post }: { post: Post }) => {
                       />
                     </div>
                   )}
-                  <div className="text-sm text-white whitespace-pre-wrap">
-                    {post.content}
-                  </div>
+                  <div className="text-sm text-white whitespace-pre-wrap">{post.content}</div>
                 </DialogContent>
               </Dialog>
               <Link href={`/posts/${post._id}`}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-white hover:bg-white/10 hover:text-white"
-                >
+                <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Comentar
                 </Button>
@@ -154,24 +120,21 @@ const PostCard = ({ post }: { post: Post }) => {
 };
 
 export default function Listpost() {
-  const [posts, setPosts] = useState<Post[] | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 9;
 
   useEffect(() => {
     const fetchPosts = async () => {
-      try {
-        const postData = await getPosts();
-        setPosts(postData);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
+      const postData = await getPosts();
+      if (postData) setPosts(postData);
+      setLoading(false);
     };
     fetchPosts();
   }, []);
 
-  // Spinner de carga
-  if (!posts) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-4 border-t-codePrimary border-b-transparent border-l-transparent border-r-transparent"></div>
@@ -179,19 +142,10 @@ export default function Listpost() {
     );
   }
 
-  // Calcular el total de páginas
-  const totalPages = Math.ceil((posts?.length || 0) / postsPerPage);
-
-  // Obtener los posts de la página actual
+  const totalPages = Math.ceil(posts.length / postsPerPage);
   const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-
-  // Generar array de números de página
-  const pageNumbers = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
-  }
+  const currentPosts = posts.slice(indexOfLastPost - postsPerPage, indexOfLastPost);
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
     <section className="mt-4">
@@ -239,8 +193,7 @@ export default function Listpost() {
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        if (currentPage < totalPages)
-                          setCurrentPage(currentPage + 1);
+                        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
                       }}
                     />
                   </PaginationItem>
