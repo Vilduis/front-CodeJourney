@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -152,10 +153,12 @@ export function LoginForm({
 
           {/* Imagen lateral en pantallas grandes */}
           <div className="relative hidden bg-muted md:block">
-            <img
+            <Image
               src="https://www.integrasources.com/media/files/Linux_MainImage.jpg.webp"
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              fill
+              className="object-cover dark:brightness-[0.2] dark:grayscale"
+              unoptimized
             />
           </div>
         </CardContent>
