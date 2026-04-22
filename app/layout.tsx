@@ -20,10 +20,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} text-black min-h-screen w-full`}>
+      <body className={`${inter.className} text-black min-h-screen w-full flex flex-col`}>
         <AuthProvider>
           <Navbar />
-          <main className="">
+          <main className="flex-1 bg-surface-base">
             {children}
             <Toaster />
           </main>
