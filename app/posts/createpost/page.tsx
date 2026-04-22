@@ -5,7 +5,7 @@ import UserPosts from "@/components/UserPosts";
 
 const CreatePostPage = () => {
   return (
-    <section className="bg-gradient-to-br from-black via-gray-900 to-black/95 px-6 py-24">
+    <section className="bg-surface-base px-6 py-24">
       <div className="space-y-8">
         <CreatePost />
         <UserPosts />

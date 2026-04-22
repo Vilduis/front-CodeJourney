@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -9,9 +10,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -106,108 +104,121 @@ export function RegisterForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="bg-gradient-to-t from-codePrimary/50 to-codeSecondary/50 text-white">
-        <CardHeader>
-          <CardTitle className="text-2xl">Crear una cuenta</CardTitle>
-          <CardDescription className="text-gray-300">
-            Registrate para empezar tu viaje
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {/* Formulario con Zod + React Hook Form */}
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {/* Nombre */}
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nombre</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Juan" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Apellido */}
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Apellido</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Perez" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Email */}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="nombre@ejemplo.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Password */}
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contraseña</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Confirm Password */}
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirmar contraseña</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Botón de envío */}
-              <Button type="submit" disabled={form.formState.isSubmitting} className="w-full bg-codePrimary hover:bg-codePrimary/70">
-                {form.formState.isSubmitting ? "Registrando..." : "Registrarme"}
-              </Button>
-            </form>
-          </Form>
-          {/* Separador y enlace para iniciar sesión */}
-          <Separator className="my-4" />
-          <div className="text-center text-sm">
-            Ya tienes una cuenta?{" "}
-            <Link href="/login" className="underline underline-offset-4">
-              Iniciar sesión
-            </Link>
+      <Card className="bg-surface-card/60 border border-white/[0.08] text-white overflow-hidden">
+        <CardContent className="grid p-0 md:grid-cols-2">
+          {/* Imagen lateral en pantallas grandes */}
+          <div className="relative hidden bg-surface-base md:block">
+            <Image
+              src="https://www.integrasources.com/media/files/Linux_MainImage.jpg.webp"
+              alt="Register"
+              fill
+              className="object-cover brightness-[0.7]"
+              unoptimized
+            />
+          </div>
+
+          {/* Formulario */}
+          <div className="p-6 md:p-8">
+            <div className="flex flex-col items-center text-center mb-6">
+              <h1 className="text-2xl font-bold">Crear una cuenta</h1>
+              <p className="text-white/60">Registrate para empezar tu viaje</p>
+            </div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                {/* Nombre y Apellido en fila */}
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-white/80 text-sm font-medium">Nombre</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Juan" {...field} className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30" />
+                        </FormControl>
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-white/80 text-sm font-medium">Apellido</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Perez" {...field} className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30" />
+                        </FormControl>
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                {/* Email */}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white/80 text-sm font-medium">Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="nombre@ejemplo.com" {...field} className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30" />
+                      </FormControl>
+                      <FormMessage className="text-red-400" />
+                    </FormItem>
+                  )}
+                />
+                {/* Password */}
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white/80 text-sm font-medium">Contraseña</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                          className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-400" />
+                    </FormItem>
+                  )}
+                />
+                {/* Confirm Password */}
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white/80 text-sm font-medium">Confirmar contraseña</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                          className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-400" />
+                    </FormItem>
+                  )}
+                />
+                {/* Botón de envío */}
+                <Button type="submit" disabled={form.formState.isSubmitting} className="w-full bg-codePrimary hover:bg-codePrimary/80 rounded-lg">
+                  {form.formState.isSubmitting ? "Registrando..." : "Registrarme"}
+                </Button>
+              </form>
+            </Form>
+            <Separator className="my-4 bg-white/[0.06]" />
+            <div className="text-center text-sm text-white/60">
+              ¿Ya tienes una cuenta?{" "}
+              <Link href="/login" className="text-white underline underline-offset-4 hover:text-codeAccent transition-colors">
+                Iniciar sesión
+              </Link>
+            </div>
           </div>
         </CardContent>
       </Card>

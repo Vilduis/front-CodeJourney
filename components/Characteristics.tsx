@@ -29,16 +29,16 @@ const characteristics = [
 
 const Characteristics = () => {
   return (
-    <section className="bg-gradient-to-br from-black via-gray-900 to-black/95 px-4 py-24">
+    <section className="bg-surface-elevated px-4 py-24">
       <div className="container mx-auto">
         <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-          <Badge className="bg-codePrimary/20 text-codePrimary hover:bg-codePrimary/30 border-none">
+          <Badge className="bg-codeAccent/10 text-codeAccent border border-codeAccent/30 hover:bg-codeAccent/20">
             Características
           </Badge>
-          <h2 className="text-4xl font-bold text-white tracking-tighter">
+          <h2 className="text-4xl font-bold text-white">
             Todo lo que necesitas para crecer como desarrollador
           </h2>
-          <p className="text-gray-200 mt-4 leading-relaxed">
+          <p className="text-white/60 mt-4 leading-relaxed">
             Una plataforma creada por y para desarrolladores
           </p>
         </div>
@@ -46,19 +46,19 @@ const Characteristics = () => {
           {characteristics.map((characteristic) => (
             <div
               key={characteristic.title}
-              className="bg-gradient-to-t from-codePrimary/50 to-codeSecondary/50 p-8 rounded-lg shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-300"
+              className="bg-surface-card border border-white/[0.08] border-t-2 border-t-codePrimary/50 backdrop-blur-sm p-8 rounded-lg shadow-lg hover:shadow-xl hover:border-codePrimary/30 hover:scale-[1.02] transition-all duration-300"
             >
-              <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-codePrimary/10 text-codePrimary">
+              <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-codeAccent/10 border border-codeAccent/30 text-codeAccent">
                 <characteristic.icon size={24} />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">
                 {characteristic.title}
               </h3>
-              <p className="text-gray-200 leading-relaxed">
+              <p className="text-white/60 leading-relaxed">
                 {characteristic.description}
               </p>
               <Link href="/posts">
-                <Button className="bg-codePrimary text-white hover:bg-background/85 hover:text-codePrimary border-none rounded-full mt-4">
+                <Button className="bg-codePrimary text-white hover:bg-codePrimary/80 border-none rounded-lg mt-4 font-semibold">
                   {characteristic.details} <ArrowRight size={20} />
                 </Button>
               </Link>

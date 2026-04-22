@@ -47,13 +47,13 @@ const Navbar = () => {
   // Si está cargando, mostrar un skeleton loader
   if (isLoading) {
     return (
-      <nav className="fixed w-full bg-gradient-to-r from-codePrimary to-codeSecondary text-white z-50 shadow-lg">
+      <nav className="fixed w-full bg-surface-base/80 border-b border-white/[0.06] text-white z-50 backdrop-blur-md">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
               <Link href="/" className="flex items-center space-x-3">
                 <Image src="/logo.png" alt="logo" width={40} height={40} />
-                <span className="text-xl font-bold tracking-wide">
+                <span className="text-xl font-bold bg-gradient-to-r from-codePrimary to-codeAccent bg-clip-text text-transparent">
                   CodeJourney
                 </span>
               </Link>
@@ -66,14 +66,15 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="fixed w-full bg-gradient-to-r from-codePrimary to-codeSecondary text-white z-50 shadow-lg">
+    <>
+    <nav className="fixed w-full bg-surface-base/80 border-b border-white/[0.06] text-white z-50 backdrop-blur-md">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo y nombre */}
           <div className="flex items-center space-x-3">
             <Link href="/" className="flex items-center space-x-3">
               <Image src="/logo.png" alt="logo" width={40} height={40} />
-              <span className="text-xl font-bold tracking-wide">
+              <span className="text-xl font-bold bg-gradient-to-r from-codePrimary to-codeAccent bg-clip-text text-transparent">
                 CodeJourney
               </span>
             </Link>
@@ -85,15 +86,15 @@ const Navbar = () => {
             <Link href="/posts">Posts</Link>
             <Link href="/about">Acerca de</Link>
 
-            <div className="h-6 w-px bg-white"></div>
+            <div className="h-6 w-px bg-white/20"></div>
 
             {isAuthenticated ? (
               <div className="relative">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Avatar className="cursor-pointer">
+                    <Avatar className="cursor-pointer ring-2 ring-codePrimary/40 hover:ring-codeAccent/60 transition-all">
                       <AvatarImage src="https://github.com/shadcn.png" />
-                      <AvatarFallback>{initial}</AvatarFallback>
+                      <AvatarFallback className="bg-gradient-to-br from-codePrimary to-codeAccent text-white font-bold">{initial}</AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
 
@@ -130,7 +131,7 @@ const Navbar = () => {
                 <Link href="/register" passHref>
                   <Button
                     variant="ghost"
-                    className="flex items-center space-x-2 hover:text-codeSecondary"
+                    className="flex items-center space-x-2 hover:text-codeAccent"
                   >
                     <UserPlus size={20} />
                     <span>Registrarse</span>
@@ -139,7 +140,7 @@ const Navbar = () => {
                 <Link href="/login" passHref>
                   <Button
                     variant="ghost"
-                    className="flex items-center space-x-2 hover:text-codeSecondary"
+                    className="flex items-center space-x-2 hover:text-codeAccent"
                   >
                     <LogIn size={20} />
                     <span>Login</span>
@@ -163,12 +164,22 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Menú mobile estilo Drawer */}
+    </nav>
+
+    {/* Overlay oscuro al abrir el drawer */}
+    {isOpen && (
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-gradient-to-r from-codePrimary to-codeSecondary shadow-xl transform transition-transform ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
+        className="fixed inset-0 bg-black/50 z-[60] md:hidden"
+        onClick={() => setIsOpen(false)}
+      />
+    )}
+
+    {/* Menú mobile estilo Drawer — fuera del nav para evitar stacking context */}
+    <div
+      className={`fixed top-0 right-0 h-full w-64 bg-surface-base border-l border-white/[0.08] shadow-2xl shadow-black/50 transform transition-transform z-[70] md:hidden ${
+        isOpen ? "translate-x-0" : "translate-x-full"
+      }`}
+    >
         <div className="p-5 flex flex-col space-y-4">
           {/* Botón para cerrar Drawer */}
           <Button
@@ -183,7 +194,7 @@ const Navbar = () => {
           <Link href="/" passHref>
             <Button
               variant="ghost"
-              className="flex items-center space-x-2 text-md hover:text-codeSecondary"
+              className="flex items-center space-x-2 text-md text-white hover:text-codeAccent"
               onClick={() => setIsOpen(false)}
             >
               <span>Inicio</span>
@@ -192,7 +203,7 @@ const Navbar = () => {
           <Link href="/posts" passHref>
             <Button
               variant="ghost"
-              className="flex items-center space-x-2 text-md hover:text-codeSecondary"
+              className="flex items-center space-x-2 text-md text-white hover:text-codeAccent"
               onClick={() => setIsOpen(false)}
             >
               <span>Posts</span>
@@ -201,30 +212,30 @@ const Navbar = () => {
           <Link href="/about" passHref>
             <Button
               variant="ghost"
-              className="flex items-center space-x-2 text-md hover:text-codeSecondary"
+              className="flex items-center space-x-2 text-md text-white hover:text-codeAccent"
               onClick={() => setIsOpen(false)}
             >
               <span>Acerca de</span>
             </Button>
           </Link>
 
-          <div className="h-px bg-gray-500"></div>
+          <div className="h-px bg-white/10"></div>
 
           {isAuthenticated ? (
             <>
               <div className="flex items-center space-x-3 px-2">
-                <Avatar>
+                <Avatar className="ring-2 ring-codePrimary/40">
                   <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>{initial}</AvatarFallback>
+                  <AvatarFallback className="bg-gradient-to-br from-codePrimary to-codeAccent text-white font-bold">{initial}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium">{fullName}</p>
-                  <p className="text-xs text-gray-300">{email}</p>
+                  <p className="text-sm font-medium text-white">{fullName}</p>
+                  <p className="text-xs text-white/40">{email}</p>
                 </div>
               </div>
               <Button
                 variant="ghost"
-                className="flex items-center space-x-2 text-md hover:text-codeSecondary"
+                className="flex items-center space-x-2 text-md text-white hover:text-codeAccent"
                 onClick={() => {
                   setIsProfileOpen(true);
                   setIsOpen(false);
@@ -234,7 +245,7 @@ const Navbar = () => {
               </Button>
               <Button
                 variant="ghost"
-                className="flex items-center space-x-2 text-md hover:text-codeSecondary"
+                className="flex items-center space-x-2 text-md text-white hover:text-codeAccent"
                 onClick={() => {
                   handleLogout();
                   setIsOpen(false);
@@ -248,7 +259,7 @@ const Navbar = () => {
               <Link href="/register" passHref>
                 <Button
                   variant="ghost"
-                  className="flex items-center space-x-2 text-md hover:text-codeSecondary"
+                  className="flex items-center space-x-2 text-md text-white hover:text-codeAccent"
                   onClick={() => setIsOpen(false)}
                 >
                   <UserPlus size={20} />
@@ -258,7 +269,7 @@ const Navbar = () => {
               <Link href="/login" passHref>
                 <Button
                   variant="ghost"
-                  className="flex items-center space-x-2 text-md hover:text-codeSecondary"
+                  className="flex items-center space-x-2 text-md text-white hover:text-codeAccent"
                   onClick={() => setIsOpen(false)}
                 >
                   <LogIn size={20} />
@@ -270,9 +281,10 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Diálogo de Profile */}
-      <Profile open={isProfileOpen} onOpenChange={setIsProfileOpen} />
-    </nav>
+    {/* Diálogo de Profile */}
+    <Profile open={isProfileOpen} onOpenChange={setIsProfileOpen} />
+
+    </>
   );
 };
 

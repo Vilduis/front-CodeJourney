@@ -64,40 +64,40 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="bg-gradient-to-t from-codePrimary/50 to-codeSecondary/50 text-white overflow-hidden">
+      <Card className="bg-surface-card/60 border border-white/[0.08] text-white overflow-hidden">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
             <div className="flex flex-col gap-6">
               {/* Encabezado */}
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Bienvenido de nuevo</h1>
-                <p className="text-balance text-gray-300 ">
+                <p className="text-balance text-white/60">
                   Inicia sesión en tu cuenta
                 </p>
               </div>
 
               {/* Mostrar error general del formulario */}
               {form.formState.errors.root && (
-                <div className="rounded-md bg-red-500/10 p-3 text-sm text-red-500">
+                <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
                   {form.formState.errors.root.message}
                 </div>
               )}
 
               {/* Email */}
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-white/80 text-sm font-medium">Correo electrónico</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="mateo@ejemplo.com"
-                  // Importante: conectar el input con react-hook-form
                   {...form.register("email")}
                   className={cn(
-                    form.formState.errors.email && "border-red-500"
+                    "bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30",
+                    form.formState.errors.email && "border-red-500/50",
                   )}
                 />
                 {form.formState.errors.email && (
-                  <p className="text-sm text-red-500">
+                  <p className="text-sm text-red-400">
                     {form.formState.errors.email.message}
                   </p>
                 )}
@@ -106,12 +106,12 @@ export function LoginForm({
               {/* Password */}
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Contraseña</Label>
+                  <Label htmlFor="password" className="text-white/80 text-sm font-medium">Contraseña</Label>
                   <a
                     href="#"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
+                    className="ml-auto text-sm text-white/40 hover:text-white transition-colors"
                   >
-                    Olvidaste tu contraseña?
+                    ¿Olvidaste tu contraseña?
                   </a>
                 </div>
                 <Input
@@ -120,11 +120,12 @@ export function LoginForm({
                   placeholder="••••••••"
                   {...form.register("password")}
                   className={cn(
-                    form.formState.errors.password && "border-red-500"
+                    "bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30",
+                    form.formState.errors.password && "border-red-500/50",
                   )}
                 />
                 {form.formState.errors.password && (
-                  <p className="text-sm text-red-500">
+                  <p className="text-sm text-red-400">
                     {form.formState.errors.password.message}
                   </p>
                 )}
@@ -133,7 +134,7 @@ export function LoginForm({
               {/* Botón de login */}
               <Button
                 type="submit"
-                className="w-full bg-codePrimary hover:bg-codePrimary/70"
+                className="w-full bg-codePrimary hover:bg-codePrimary/80 rounded-lg"
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting
@@ -142,9 +143,9 @@ export function LoginForm({
               </Button>
 
               {/* Link de registro */}
-              <div className="text-center text-sm">
-                No tienes una cuenta?{" "}
-                <Link href="/register" className="underline underline-offset-4">
+              <div className="text-center text-sm text-white/60">
+                ¿No tienes una cuenta?{" "}
+                <Link href="/register" className="text-white underline underline-offset-4 hover:text-codeAccent transition-colors">
                   Registrate
                 </Link>
               </div>
@@ -152,12 +153,12 @@ export function LoginForm({
           </form>
 
           {/* Imagen lateral en pantallas grandes */}
-          <div className="relative hidden bg-muted md:block">
+          <div className="relative hidden bg-surface-base md:block">
             <Image
               src="https://www.integrasources.com/media/files/Linux_MainImage.jpg.webp"
               alt="Image"
               fill
-              className="object-cover dark:brightness-[0.2] dark:grayscale"
+              className="object-cover brightness-[0.7]"
               unoptimized
             />
           </div>
@@ -165,7 +166,7 @@ export function LoginForm({
       </Card>
 
       {/* Footer con términos y condiciones */}
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:text-white [&_a]:underline [&_a]:underline-offset-4 [&_a]:transition-colors hover:[&_a]:text-codePrimary">
+      <div className="text-balance text-center text-xs text-white/30 [&_a]:text-white/60 [&_a]:underline [&_a]:underline-offset-4 [&_a]:transition-colors hover:[&_a]:text-codeAccent">
         Al iniciar sesión, aceptas nuestros <a href="#">Términos de Servicio</a>{" "}
         y <a href="#">Política de Privacidad</a>.
       </div>

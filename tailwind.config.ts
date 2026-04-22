@@ -10,9 +10,15 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				codePrimary: '#8e2de2',
-				codeSecondary: '#4a00e0',
-				dark: "#3600a9",
+				codePrimary: '#7c3aed',
+				codeSecondary: '#6d28d9',
+				codeAccent: '#06b6d4',
+				surface: {
+					base: '#070d1a',
+					DEFAULT: '#0c1628',
+					elevated: '#111f38',
+					card: '#172035',
+				},
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				card: {

@@ -28,6 +28,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { formatDate, getAuthor } from "@/lib/utils";
 
 interface PostDetailProps {
@@ -45,6 +55,7 @@ const PostDetail = ({ postId }: PostDetailProps) => {
   const [editingComment, setEditingComment] = useState<string | null>(null);
   const [editCommentContent, setEditCommentContent] = useState("");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
 
   const fetchPost = useCallback(async () => {
     try {
@@ -139,7 +150,7 @@ const PostDetail = ({ postId }: PostDetailProps) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-4 border-t-codePrimary border-b-transparent border-l-transparent border-r-transparent"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-2 border-t-codeAccent border-b-transparent border-l-transparent border-r-transparent"></div>
       </div>
     );
   }
@@ -151,33 +162,35 @@ const PostDetail = ({ postId }: PostDetailProps) => {
   const author = getAuthor(post.author);
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-3xl mx-auto px-4 pb-12">
       <Button
         variant="ghost"
         size="sm"
-        className="mb-4 text-white hover:bg-white/10 hover:text-white"
+        className="mb-6 text-white/60 hover:text-white hover:bg-white/10 rounded-lg"
         onClick={() => router.back()}
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
         Volver a posts
       </Button>
 
-      <Card className="bg-gradient-to-br from-codePrimary/50 to-codeSecondary/50">
-        <CardHeader>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center justify-center w-12 h-12 bg-blue-500 text-white font-semibold rounded-full">
-              {author.name.charAt(0) || "U"}
+      {/* Post principal */}
+      <Card className="bg-surface-card/60 backdrop-blur-sm border border-white/[0.08] mb-6 overflow-hidden">
+        <CardHeader className="pb-4 border-b border-white/[0.06]">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-codePrimary to-codeAccent text-white font-bold rounded-full text-lg">
+              {author.name.charAt(0).toUpperCase() || "U"}
             </div>
             <div>
-              <div className="text-lg font-bold text-white">
+              <div className="text-base font-bold text-white">
                 {author.name} {author.lastName}
               </div>
-              <div className="text-sm text-gray-300">{formatDate(post.createdAt)}</div>
+              <div className="text-xs text-white/30">{formatDate(post.createdAt)}</div>
             </div>
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="pt-6">
+          <CardTitle className="text-2xl font-bold text-white mb-4 leading-tight">{post.title}</CardTitle>
           {post.image && (
             <div className="mb-6">
               <Image
@@ -185,102 +198,138 @@ const PostDetail = ({ postId }: PostDetailProps) => {
                 alt={post.title}
                 width={800}
                 height={400}
-                className="rounded-lg object-cover w-full"
+                className="rounded-xl object-cover w-full max-h-[400px]"
                 unoptimized
               />
             </div>
           )}
-          <CardTitle className="text-2xl font-bold text-white mb-4">{post.title}</CardTitle>
-          <CardDescription className="text-md text-white/90 whitespace-pre-wrap">
+          <CardDescription className="text-white/60 text-sm leading-relaxed whitespace-pre-wrap">
             {post.content}
           </CardDescription>
         </CardContent>
 
-        <CardFooter>
-          <div className="w-full space-y-6">
-            <div className="flex items-center text-white/70 text-sm">
-              <MessageSquare className="mr-2 h-5 w-5" />
-              <span>{post.comments?.length || 0} comentarios</span>
-            </div>
-
-            {user ? (
-              <div className="space-y-4">
-                <Textarea
-                  placeholder="Escribe tu comentario..."
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  className="bg-white/10 text-white placeholder:text-white/50"
-                />
-                <Button
-                  onClick={handleSubmitComment}
-                  disabled={isSubmitting}
-                  className="bg-codePrimary hover:bg-codeSecondary"
-                >
-                  {isSubmitting ? "Enviando..." : "Comentar"}
-                </Button>
-              </div>
-            ) : (
-              <div className="text-center text-white/70 py-4">
-                <Link href="/login" className="bg-codePrimary hover:bg-codePrimary/80 px-2 py-2 rounded-md">
-                  Inicia sesión
-                </Link>{" "}
-                para comentar
-              </div>
-            )}
-
-            {post.comments && post.comments.length > 0 ? (
-              <div className="space-y-4">
-                {post.comments.map((c) => {
-                  const commentAuthor = getAuthor(c.author);
-                  const commentAuthorId = typeof c.author === "string" ? c.author : c.author._id;
-                  const isCommentAuthor = user && commentAuthorId === user._id;
-
-                  return (
-                    <div key={c._id} className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-                      <div className="flex items-center justify-between text-sm text-white/70 mb-2">
-                        <div className="flex items-center">
-                          <span className="font-semibold">
-                            {commentAuthor.name} {commentAuthor.lastName}
-                          </span>
-                          <span className="mx-2">•</span>
-                          <span>{formatDate(c.createdAt)}</span>
-                        </div>
-                        {isCommentAuthor && (
-                          <div className="flex space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-white hover:bg-white/10"
-                              onClick={() => {
-                                setEditingComment(c._id!);
-                                setEditCommentContent(c.content);
-                                setIsEditDialogOpen(true);
-                              }}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-white hover:bg-white/10"
-                              onClick={() => handleDeleteComment(c._id!)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-sm text-white/90">{c.content}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="text-sm text-white/50 text-center">No hay comentarios aún.</p>
-            )}
+        <CardFooter className="border-t border-white/[0.06] pt-4">
+          <div className="flex items-center text-white/30 text-xs gap-1.5">
+            <MessageSquare className="h-4 w-4" />
+            <span>{post.comments?.length || 0} comentarios</span>
           </div>
         </CardFooter>
       </Card>
+
+      {/* Sección comentarios */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-bold text-white drop-shadow-sm">Comentarios</h2>
+
+        {user ? (
+          <div className="bg-surface-card/60 backdrop-blur-sm border border-white/[0.08] rounded-xl p-4 space-y-3">
+            <Textarea
+              placeholder="Escribe tu comentario..."
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 resize-none focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30"
+            />
+            <div className="flex justify-end">
+              <Button
+                onClick={handleSubmitComment}
+                disabled={isSubmitting}
+                className="bg-codePrimary hover:bg-codePrimary/80 rounded-lg px-5 text-sm"
+              >
+                {isSubmitting ? "Enviando..." : "Publicar comentario"}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-surface-card/40 border border-white/[0.08] rounded-xl p-6 text-center">
+            <p className="text-white/60 text-sm mb-3">Inicia sesión para unirte a la conversación</p>
+            <Link href="/login">
+              <Button className="bg-codePrimary hover:bg-codePrimary/80 rounded-lg px-5 text-sm">
+                Iniciar sesión
+              </Button>
+            </Link>
+          </div>
+        )}
+
+        {post.comments && post.comments.length > 0 ? (
+          <div className="space-y-3">
+            {post.comments.map((c) => {
+              const commentAuthor = getAuthor(c.author);
+              const commentAuthorId = typeof c.author === "string" ? c.author : c.author._id;
+              const isCommentAuthor = user && commentAuthorId === user._id;
+
+              return (
+                <div key={c._id} className="bg-surface-card/40 border border-white/[0.06] rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center w-7 h-7 bg-gradient-to-br from-codePrimary to-codeAccent text-white font-bold rounded-full text-xs">
+                        {commentAuthor.name.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="text-sm font-semibold text-white">
+                        {commentAuthor.name} {commentAuthor.lastName}
+                      </span>
+                      <span className="text-gray-600 text-xs">•</span>
+                      <span className="text-xs text-white/30">{formatDate(c.createdAt)}</span>
+                    </div>
+                    {isCommentAuthor && (
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="w-7 h-7 text-white/30 hover:text-white hover:bg-white/10 rounded-lg"
+                          onClick={() => {
+                            setEditingComment(c._id!);
+                            setEditCommentContent(c.content);
+                            setIsEditDialogOpen(true);
+                          }}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="w-7 h-7 text-white/30 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                          onClick={() => setDeletingCommentId(c._id!)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-sm text-white/60 leading-relaxed">{c.content}</p>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-10 text-white/30 text-sm">
+            Sé el primero en comentar.
+          </div>
+        )}
+      </div>
+
+      <AlertDialog open={!!deletingCommentId} onOpenChange={(open) => !open && setDeletingCommentId(null)}>
+        <AlertDialogContent className="bg-surface-card border border-white/[0.08] text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">¿Eliminar comentario?</AlertDialogTitle>
+            <AlertDialogDescription className="text-white/60">
+              Esta acción no se puede deshacer. El comentario será eliminado permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-transparent border border-white/[0.12] text-white/60 hover:text-white hover:bg-white/10 rounded-lg">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-500 hover:bg-red-600 text-white rounded-lg"
+              onClick={() => {
+                if (deletingCommentId) handleDeleteComment(deletingCommentId);
+                setDeletingCommentId(null);
+              }}
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
@@ -307,7 +356,7 @@ const PostDetail = ({ postId }: PostDetailProps) => {
             <Button
               onClick={handleEditComment}
               disabled={isSubmitting}
-              className="bg-codePrimary hover:bg-codeSecondary"
+              className="bg-codePrimary hover:bg-codePrimary/80"
             >
               {isSubmitting ? "Guardando..." : "Guardar cambios"}
             </Button>

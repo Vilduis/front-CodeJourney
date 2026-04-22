@@ -13,7 +13,7 @@ const PostPage = ({ params }: PageProps) => {
   const { id } = use(params);
   
   return (
-    <section className="bg-gradient-to-br from-black via-gray-900 to-black/95 min-h-screen py-24">
+    <section className="bg-surface-base min-h-screen py-24">
       <PostDetail postId={id} />
     </section>
   );

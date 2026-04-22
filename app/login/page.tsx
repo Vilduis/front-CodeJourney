@@ -28,7 +28,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 
 export default function LoginPage() {
   return (
-    <div className="bg-gradient-to-br from-black via-gray-900 to-black/95 flex min-h-screen flex-col items-center justify-center bg-muted p-6 md:p-10">
+    <div className="bg-surface-base flex min-h-screen flex-col items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm md:max-w-3xl">
         <PublicRoute>
           <LoginForm />

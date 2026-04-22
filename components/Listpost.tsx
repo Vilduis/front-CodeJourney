@@ -39,24 +39,26 @@ const PostCard = ({ post }: { post: Post }) => {
 
   return (
     <>
-      <Card className="bg-gradient-to-br from-codePrimary/50 to-codeSecondary/50 hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-        <CardHeader>
-          <div className="flex flex-col">
+      <Card className="bg-surface-card/60 backdrop-blur-sm border border-white/[0.08] hover:border-codePrimary/30 hover:bg-surface-card/80 hover:shadow-xl hover:shadow-black/40 hover:scale-[1.02] transition-all duration-300 overflow-hidden flex flex-col">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 bg-blue-500 text-white font-semibold rounded-full">
-                {author.name.charAt(0)}
+              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-codePrimary to-codeAccent text-white font-bold rounded-full text-sm">
+                {author.name.charAt(0).toUpperCase()}
               </div>
-              <div className="text-sm text-white font-bold">
-                {author.name} {author.lastName}
+              <div>
+                <div className="text-sm font-semibold text-white">
+                  {author.name} {author.lastName}
+                </div>
+                <div className="text-xs text-white/30">{formatDate(post.createdAt)}</div>
               </div>
             </div>
-            <div className="text-sm text-gray-400 mt-1">{formatDate(post.createdAt)}</div>
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="flex-1">
           {post.image && (
-            <div className="relative w-full h-[200px] mb-4">
+            <div className="relative w-full h-[180px] mb-4">
               <Image
                 src={post.image}
                 alt={post.title}
@@ -66,33 +68,36 @@ const PostCard = ({ post }: { post: Post }) => {
               />
             </div>
           )}
-          <CardTitle className="text-lg font-bold text-white line-clamp-2">{post.title}</CardTitle>
-          <CardDescription className="mt-2 text-white line-clamp-3">{post.content}</CardDescription>
+          <CardTitle className="text-base font-bold text-white line-clamp-2 mb-2">{post.title}</CardTitle>
+          <CardDescription className="text-white/60 text-sm line-clamp-3 leading-relaxed">{post.content}</CardDescription>
         </CardContent>
 
-        <CardFooter>
-          <div className="flex items-center justify-between w-full mt-2">
-            <div className="flex items-center text-white/70 text-sm">
-              <MessageSquare className="mr-1 h-4 w-4" />
-              <span>{post.comments?.length || 0}</span>
+        <CardFooter className="border-t border-white/[0.06] pt-3">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center text-white/30 text-xs gap-1">
+              <MessageSquare className="h-3.5 w-3.5" />
+              <span>{post.comments?.length || 0} comentarios</span>
             </div>
             <div className="flex gap-2">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
-                    <Eye className="h-4 w-4 mr-2" />
+                  <Button size="sm" className="bg-codePrimary text-white hover:bg-codePrimary/80 text-xs rounded-lg transition-all duration-200">
+                    <Eye className="h-3.5 w-3.5 mr-1.5" />
                     Ver contenido
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-gradient-to-br from-codePrimary/90 to-codeSecondary/90 border-none text-white">
-                  <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold">{post.title}</DialogTitle>
-                    <DialogDescription className="text-white/70">
-                      Por {author.name} {author.lastName} • {formatDate(post.createdAt)}
+                <DialogContent className="bg-surface-elevated border border-white/[0.08] text-white max-w-2xl">
+                  <DialogHeader className="border-b border-white/[0.08] pb-4">
+                    <DialogTitle className="text-xl font-bold text-white">{post.title}</DialogTitle>
+                    <DialogDescription className="flex items-center gap-2 text-white/60 text-sm mt-1">
+                      <span className="flex items-center justify-center w-6 h-6 bg-gradient-to-br from-codePrimary to-codeAccent text-white font-bold rounded-full text-xs">
+                        {author.name.charAt(0).toUpperCase()}
+                      </span>
+                      {author.name} {author.lastName} • {formatDate(post.createdAt)}
                     </DialogDescription>
                   </DialogHeader>
                   {post.image && (
-                    <div className="relative h-[200px] w-full mb-4">
+                    <div className="relative h-[220px] w-full">
                       <Image
                         src={post.image}
                         alt={post.title}
@@ -102,12 +107,22 @@ const PostCard = ({ post }: { post: Post }) => {
                       />
                     </div>
                   )}
-                  <div className="text-sm text-white whitespace-pre-wrap">{post.content}</div>
+                  <div className="text-sm text-white/60 whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto pr-1">
+                    {post.content}
+                  </div>
+                  <div className="border-t border-white/[0.08] pt-3 flex justify-end">
+                    <Link href={`/posts/${post._id}`}>
+                      <Button size="sm" className="bg-codeAccent text-slate-900 hover:bg-codeAccent/90 rounded-lg text-xs font-semibold">
+                        <MessageSquare className="h-3.5 w-3.5 mr-1.5" />
+                        Ver comentarios
+                      </Button>
+                    </Link>
+                  </div>
                 </DialogContent>
               </Dialog>
               <Link href={`/posts/${post._id}`}>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
-                  <MessageSquare className="h-4 w-4 mr-2" />
+                <Button size="sm" variant="ghost" className="text-white/60 hover:text-white hover:bg-white/10 text-xs rounded-lg">
+                  <MessageSquare className="h-3.5 w-3.5 mr-1.5" />
                   Comentar
                 </Button>
               </Link>
@@ -137,7 +152,7 @@ export default function Listpost() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-4 border-t-codePrimary border-b-transparent border-l-transparent border-r-transparent"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-2 border-t-codeAccent border-b-transparent border-l-transparent border-r-transparent"></div>
       </div>
     );
   }

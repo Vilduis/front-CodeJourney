@@ -168,7 +168,7 @@ const UserPosts = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-4 border-t-codePrimary border-b-transparent border-l-transparent border-r-transparent"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-2 border-t-codeAccent border-b-transparent border-l-transparent border-r-transparent"></div>
       </div>
     );
   }
@@ -178,20 +178,20 @@ const UserPosts = () => {
   }
 
   if (posts.length === 0) {
-    return <div className="text-center text-gray-500 py-4">No has publicado ningún post aún.</div>;
+    return <div className="text-center text-white/30 py-4">No has publicado ningún post aún.</div>;
   }
 
   return (
     <div className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {currentPosts.map((post) => (
-          <Card key={post._id} className="bg-gradient-to-br from-codePrimary/50 to-codeSecondary/50">
+          <Card key={post._id} className="bg-surface-card/60 border border-white/[0.08] hover:border-codePrimary/30 transition-colors duration-200 flex flex-col">
             <CardHeader>
               <CardTitle className="text-xl font-bold text-white line-clamp-2">{post.title}</CardTitle>
-              <CardDescription className="text-gray-300">{formatDate(post.createdAt)}</CardDescription>
+              <CardDescription className="text-white/30">{formatDate(post.createdAt)}</CardDescription>
             </CardHeader>
 
-            <CardContent>
+            <CardContent className="flex-1">
               {post.image && (
                 <div className="relative h-48 mb-4">
                   <Image
@@ -203,45 +203,45 @@ const UserPosts = () => {
                   />
                 </div>
               )}
-              <p className="text-white/90 line-clamp-3">{post.content}</p>
+              <p className="text-white/60 line-clamp-3 text-sm">{post.content}</p>
             </CardContent>
 
-            <CardFooter className="flex justify-between items-center">
-              <div className="flex items-center text-white/70">
-                <MessageSquare className="h-5 w-5 mr-2" />
+            <CardFooter className="flex justify-between items-center border-t border-white/[0.06] pt-3">
+              <div className="flex items-center text-white/30 text-sm">
+                <MessageSquare className="h-4 w-4 mr-2" />
                 <span>{post.comments?.length || 0} comentarios</span>
               </div>
 
-              <div className="flex space-x-2">
+              <div className="flex space-x-1">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-white/10"
+                  className="w-8 h-8 text-white/40 hover:text-white hover:bg-white/10 rounded-lg"
                   onClick={() => handleEdit(post)}
                 >
-                  <Pencil className="h-5 w-5" />
+                  <Pencil className="h-4 w-4" />
                 </Button>
 
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                      <Trash2 className="h-5 w-5" />
+                    <Button variant="ghost" size="icon" className="w-8 h-8 text-white/40 hover:text-red-400 hover:bg-red-500/10 rounded-lg">
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="bg-surface-card border border-white/[0.08] text-white">
                     <DialogHeader>
-                      <DialogTitle>¿Estás seguro?</DialogTitle>
-                      <DialogDescription>
+                      <DialogTitle className="text-white">¿Eliminar post?</DialogTitle>
+                      <DialogDescription className="text-white/60">
                         Esta acción no se puede deshacer. Se eliminará permanentemente el post y todos sus comentarios.
                       </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                       <DialogClose asChild>
-                        <Button variant="ghost">Cancelar</Button>
+                        <Button variant="ghost" className="text-white/60 hover:text-white hover:bg-white/10 rounded-lg">Cancelar</Button>
                       </DialogClose>
                       <DialogClose asChild>
                         <Button
-                          variant="destructive"
+                          className="bg-red-500 hover:bg-red-600 text-white rounded-lg"
                           onClick={() => post._id && handleDelete(post._id)}
                         >
                           Eliminar
@@ -257,49 +257,49 @@ const UserPosts = () => {
       </div>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-codePrimary/90 to-codeSecondary/90">
+        <DialogContent className="sm:max-w-[500px] bg-surface-card border border-white/[0.08] text-white">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-white">Editar post</DialogTitle>
-            <DialogDescription className="text-gray-300">
+            <DialogDescription className="text-white/60">
               Realiza los cambios necesarios en tu post
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleUpdate} className="space-y-6">
+          <form onSubmit={handleUpdate} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="title" className="text-white">Título</Label>
+              <Label htmlFor="title" className="text-white/80 text-sm font-medium">Título</Label>
               <Input
                 id="title"
                 name="title"
                 value={editingPost?.title || ""}
                 onChange={handleEditChange}
-                className="bg-white/10 text-white placeholder:text-gray-400"
+                className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30"
                 placeholder="Título del post"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="image" className="text-white">URL de la imagen</Label>
+              <Label htmlFor="image" className="text-white/80 text-sm font-medium">URL de la imagen</Label>
               <Input
                 id="image"
                 name="image"
                 value={editingPost?.image || ""}
                 onChange={handleEditChange}
-                className="bg-white/10 text-white placeholder:text-gray-400"
+                className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30"
                 placeholder="https://ejemplo.com/imagen.jpg"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="content" className="text-white">Contenido</Label>
+              <Label htmlFor="content" className="text-white/80 text-sm font-medium">Contenido</Label>
               <Textarea
                 id="content"
                 name="content"
                 value={editingPost?.content || ""}
                 onChange={handleEditChange}
-                className="min-h-[200px] bg-white/10 text-white placeholder:text-gray-400"
+                className="min-h-[200px] bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30"
                 placeholder="Contenido del post"
                 required
               />
@@ -310,14 +310,14 @@ const UserPosts = () => {
                 type="button"
                 variant="ghost"
                 onClick={() => setIsEditDialogOpen(false)}
-                className="text-white hover:bg-white/10"
+                className="text-white/60 hover:text-white hover:bg-white/10 rounded-lg"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
                 disabled={isUpdateLoading}
-                className="bg-codePrimary text-white hover:bg-codePrimary/80"
+                className="bg-codePrimary text-white hover:bg-codePrimary/80 rounded-lg"
               >
                 {isUpdateLoading ? "Actualizando..." : "Actualizar"}
               </Button>
@@ -329,22 +329,22 @@ const UserPosts = () => {
       {totalPages > 1 && (
         <div className="flex justify-center items-center space-x-4 mt-6">
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
-            className="text-white hover:bg-white/10"
+            className="text-white/60 hover:text-white hover:bg-white/10 rounded-lg disabled:opacity-30"
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
             Anterior
           </Button>
-          <span className="text-white">Página {currentPage} de {totalPages}</span>
+          <span className="text-white/60 text-sm">Página {currentPage} de {totalPages}</span>
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="text-white hover:bg-white/10"
+            className="text-white/60 hover:text-white hover:bg-white/10 rounded-lg disabled:opacity-30"
           >
             Siguiente
             <ChevronRight className="h-4 w-4 ml-2" />

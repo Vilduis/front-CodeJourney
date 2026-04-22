@@ -53,17 +53,17 @@ const CreatePost = () => {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto bg-gradient-to-br from-codePrimary/50 to-codeSecondary/50">
+    <Card className="w-full max-w-2xl mx-auto bg-surface-card/60 border border-white/[0.08]">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-white">Crear nuevo post</CardTitle>
-        <CardDescription className="text-gray-300">
+        <CardDescription className="text-white/60">
           Comparte tu conocimiento con la comunidad
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-white">Título</Label>
+            <Label htmlFor="title" className="text-white/80 text-sm font-medium">Título</Label>
             <Input
               id="title"
               name="title"
@@ -71,12 +71,12 @@ const CreatePost = () => {
               value={formData.title}
               onChange={handleChange}
               required
-              className="bg-white/10 text-white placeholder:text-gray-400"
+              className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image" className="text-white">URL de la imagen</Label>
+            <Label htmlFor="image" className="text-white/80 text-sm font-medium">URL de la imagen</Label>
             <Input
               id="image"
               name="image"
@@ -84,12 +84,12 @@ const CreatePost = () => {
               value={formData.image}
               onChange={handleChange}
               required
-              className="bg-white/10 text-white placeholder:text-gray-400"
+              className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="content" className="text-white">Contenido</Label>
+            <Label htmlFor="content" className="text-white/80 text-sm font-medium">Contenido</Label>
             <Textarea
               id="content"
               name="content"
@@ -97,7 +97,7 @@ const CreatePost = () => {
               value={formData.content}
               onChange={handleChange}
               required
-              className="min-h-[200px] bg-white/10 text-white placeholder:text-gray-400"
+              className="min-h-[200px] bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30"
             />
           </div>
 
@@ -106,14 +106,14 @@ const CreatePost = () => {
               type="button"
               variant="ghost"
               onClick={() => router.back()}
-              className="text-white hover:bg-white/10"
+              className="text-white/60 hover:text-white hover:bg-white/10 rounded-lg"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="bg-codePrimary text-white hover:bg-codePrimary/80"
+              className="bg-codePrimary text-white hover:bg-codePrimary/80 rounded-lg"
             >
               {loading ? "Creando..." : "Crear post"}
             </Button>
