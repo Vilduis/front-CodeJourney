@@ -228,20 +228,20 @@ const UserPosts = () => {
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="bg-surface-card border border-white/[0.08] text-white">
+                  <DialogContent className="w-[95vw] max-w-md bg-surface-card border border-white/[0.08] text-white">
                     <DialogHeader>
                       <DialogTitle className="text-white">¿Eliminar post?</DialogTitle>
                       <DialogDescription className="text-white/60">
                         Esta acción no se puede deshacer. Se eliminará permanentemente el post y todos sus comentarios.
                       </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter>
+                    <DialogFooter className="flex-col-reverse sm:flex-row gap-2">
                       <DialogClose asChild>
-                        <Button variant="ghost" className="text-white/60 hover:text-white hover:bg-white/10 rounded-lg">Cancelar</Button>
+                        <Button variant="ghost" className="w-full sm:w-auto text-white/60 hover:text-white hover:bg-white/10 rounded-lg">Cancelar</Button>
                       </DialogClose>
                       <DialogClose asChild>
                         <Button
-                          className="bg-red-500 hover:bg-red-600 text-white rounded-lg"
+                          className="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white rounded-lg"
                           onClick={() => post._id && handleDelete(post._id)}
                         >
                           Eliminar
@@ -257,7 +257,7 @@ const UserPosts = () => {
       </div>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-surface-card border border-white/[0.08] text-white">
+        <DialogContent className="w-[95vw] max-w-[500px] bg-surface-card border border-white/[0.08] text-white">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-white">Editar post</DialogTitle>
             <DialogDescription className="text-white/60">
@@ -305,19 +305,19 @@ const UserPosts = () => {
               />
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="flex-col-reverse sm:flex-row gap-2">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => setIsEditDialogOpen(false)}
-                className="text-white/60 hover:text-white hover:bg-white/10 rounded-lg"
+                className="w-full sm:w-auto text-white/60 hover:text-white hover:bg-white/10 rounded-lg"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
                 disabled={isUpdateLoading}
-                className="bg-codePrimary text-white hover:bg-codePrimary/80 rounded-lg"
+                className="w-full sm:w-auto bg-codePrimary text-white hover:bg-codePrimary/80 rounded-lg"
               >
                 {isUpdateLoading ? "Actualizando..." : "Actualizar"}
               </Button>

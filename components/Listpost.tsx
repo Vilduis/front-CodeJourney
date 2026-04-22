@@ -82,8 +82,8 @@ const PostCard = ({ post }: { post: Post }) => {
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button size="sm" className="bg-codePrimary text-white hover:bg-codePrimary/80 text-xs rounded-lg transition-all duration-200">
-                    <Eye className="h-3.5 w-3.5 mr-1.5" />
-                    Ver contenido
+                    <Eye className="h-3.5 w-3.5 sm:mr-1.5" />
+                    <span className="hidden sm:inline">Ver contenido</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-surface-elevated border border-white/[0.08] text-white max-w-2xl">
@@ -122,8 +122,8 @@ const PostCard = ({ post }: { post: Post }) => {
               </Dialog>
               <Link href={`/posts/${post._id}`}>
                 <Button size="sm" variant="ghost" className="text-white/60 hover:text-white hover:bg-white/10 text-xs rounded-lg">
-                  <MessageSquare className="h-3.5 w-3.5 mr-1.5" />
-                  Comentar
+                  <MessageSquare className="h-3.5 w-3.5 sm:mr-1.5" />
+                  <span className="hidden sm:inline">Comentar</span>
                 </Button>
               </Link>
             </div>

@@ -72,69 +72,71 @@ const Profile: React.FC<ProfileProps> = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px] bg-surface-card border border-white/[0.08] text-white">
+      <DialogContent className="w-[95vw] max-w-md bg-surface-card border border-white/[0.08] text-white">
         <DialogHeader>
-          <DialogTitle className="text-white">Perfil</DialogTitle>
-          <DialogDescription className="text-white/60">
-            {isEditing
-              ? "Modifica los datos de tu cuenta"
-              : "Estos son los datos de tu cuenta."}
-          </DialogDescription>
+          {/* Avatar */}
+          <div className="flex flex-col items-center gap-3 mb-2">
+            <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-codePrimary to-codeAccent text-white font-bold rounded-full text-2xl">
+              {formData.name ? formData.name.charAt(0).toUpperCase() : "U"}
+            </div>
+            <div className="text-center">
+              <DialogTitle className="text-white text-lg">{formData.name} {formData.lastName}</DialogTitle>
+              <DialogDescription className="text-white/40 text-sm">
+                {isEditing ? "Modifica los datos de tu cuenta" : formData.email}
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right text-white/80 text-sm">
-              Nombre
-            </Label>
+
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="name" className="text-white/80 text-sm font-medium">Nombre</Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               disabled={!isEditing}
-              className="col-span-3 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30 disabled:opacity-50"
+              className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30 disabled:opacity-50"
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="lastName" className="text-right text-white/80 text-sm">
-              Apellido
-            </Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="lastName" className="text-white/80 text-sm font-medium">Apellido</Label>
             <Input
               id="lastName"
               value={formData.lastName}
               onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               disabled={!isEditing}
-              className="col-span-3 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30 disabled:opacity-50"
+              className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30 disabled:opacity-50"
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right text-white/80 text-sm">
-              Email
-            </Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-white/80 text-sm font-medium">Email</Label>
             <Input
               id="email"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               disabled={!isEditing}
-              className="col-span-3 bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30 disabled:opacity-50"
+              className="bg-white/[0.06] border-white/[0.12] text-white placeholder:text-white/30 focus:border-codePrimary focus:ring-1 focus:ring-codePrimary/30 disabled:opacity-50"
             />
           </div>
         </div>
-        <DialogFooter>
+
+        <DialogFooter className="flex-col-reverse sm:flex-row gap-2 mt-2">
           {isEditing ? (
             <>
               <Button
                 type="button"
                 variant="ghost"
                 onClick={handleCancel}
-                className="text-white/60 hover:text-white hover:bg-white/10 rounded-lg"
+                className="w-full sm:w-auto text-white/60 hover:text-white hover:bg-white/10 rounded-lg"
               >
                 Cancelar
               </Button>
               <Button
                 onClick={handleSubmit}
                 disabled={isLoading}
-                className="bg-codePrimary hover:bg-codePrimary/80 rounded-lg"
+                className="w-full sm:w-auto bg-codePrimary hover:bg-codePrimary/80 rounded-lg"
               >
                 {isLoading ? "Guardando..." : "Guardar cambios"}
               </Button>
@@ -145,13 +147,13 @@ const Profile: React.FC<ProfileProps> = ({ open, onOpenChange }) => {
                 type="button"
                 variant="ghost"
                 onClick={handleClose}
-                className="text-white/60 hover:text-white hover:bg-white/10 rounded-lg"
+                className="w-full sm:w-auto text-white/60 hover:text-white hover:bg-white/10 rounded-lg"
               >
                 Cerrar
               </Button>
               <Button
                 onClick={() => setIsEditing(true)}
-                className="bg-codePrimary hover:bg-codePrimary/80 rounded-lg"
+                className="w-full sm:w-auto bg-codePrimary hover:bg-codePrimary/80 rounded-lg"
               >
                 Editar perfil
               </Button>
