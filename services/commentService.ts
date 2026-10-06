@@ -1,80 +1,14 @@
-import { Comment } from "../types/comment";
-import axios from "axios";
-import config from "@/lib/config";
+import { api } from "@/lib/api";
+import { Comment } from "@/types/comment";
 
-const API_URL = `${config.apiUrl}${config.api.comments}`;
+export const MIN_COMMENT_LENGTH = 2;
 
-export const getComments = async (): Promise<Comment[] | null> => {
-    try {
-        const response = await axios.get(API_URL);
-        return response.data.comments;
-    } catch {
-        return null;
-    }
-};
+export const createComment = async (postId: string, content: string) =>
+  (await api.post<{ newComment: Comment }>(`/api/comments/create/${postId}`, { content })).data.newComment;
 
-export const createComment = async (
-    token: string,
-    postId: string,
-    comment: Partial<Comment>
-): Promise<Comment | null> => {
-    try {
-        const response = await axios.post(
-            `${API_URL}/create/${postId}`,
-            { content: comment.content },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-        return response.data.newComment;
-    } catch {
-        return null;
-    }
-};
+export const updateComment = async (commentId: string, content: string) =>
+  (await api.put<{ updatedComment: Comment }>(`/api/comments/${commentId}`, { content })).data.updatedComment;
 
-export const getCommentsByPostId = async (postId: string): Promise<Comment[] | null> => {
-    try {
-        const response = await axios.get(`${API_URL}/post/${postId}`);
-        return response.data.comments;
-    } catch {
-        return null;
-    }
-};
-
-export const getComment = async (commentId: string): Promise<Comment | null> => {
-    try {
-        const response = await axios.get(`${API_URL}/${commentId}`);
-        return response.data as Comment;
-    } catch {
-        return null;
-    }
-};
-
-export const updateComment = async (
-    token: string,
-    commentId: string,
-    comment: Partial<Comment>
-): Promise<Comment | null> => {
-    try {
-        const response = await axios.put(`${API_URL}/${commentId}`, comment, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        return response.data as Comment;
-    } catch {
-        return null;
-    }
-};
-
-export const deleteComment = async (token: string, commentId: string): Promise<boolean> => {
-    try {
-        await axios.delete(`${API_URL}/${commentId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        return true;
-    } catch {
-        return false;
-    }
+export const deleteComment = async (commentId: string) => {
+  await api.delete(`/api/comments/${commentId}`);
 };

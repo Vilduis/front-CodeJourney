@@ -1,87 +1,369 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
 
-body {
-  font-family: 'Inter', sans-serif;
-}
+@theme {
+  --color-codePrimary: #7c3aed;
+  --color-codeAccent: #06b6d4;
 
-h1, h2, h3, h4, h5, h6 {
-  letter-spacing: -0.025em;
+  --color-surface-base: #070d1a;
+  --color-surface-elevated: #111f38;
+  --color-surface-card: #172035;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --background: 221 58% 6.5%;
+    --foreground: 220 20% 96%;
+    --card: 222 40% 15%;
+    --card-foreground: 220 20% 96%;
+    --popover: 218 53% 14%;
+    --popover-foreground: 220 20% 96%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 218 40% 18%;
+    --secondary-foreground: 220 20% 96%;
+    --muted: 218 40% 18%;
+    --muted-foreground: 220 14% 68%;
+    --accent: 218 40% 20%;
+    --accent-foreground: 220 20% 96%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 30% 20%;
+    --input: 220 30% 22%;
+    --ring: 189 94% 43%;
     --radius: 0.5rem;
   }
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
-}
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-
-
-@layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
+  html {
+    color-scheme: dark;
+    scrollbar-color: var(--color-surface-card) var(--color-surface-base);
+  }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-codePrimary) 45%, transparent);
+    color: #fff;
+  }
+
+  input,
+  textarea {
+    caret-color: var(--color-codeAccent);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--color-codeAccent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  .markdown {
+    color: rgb(255 255 255 / 0.85);
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+  }
+
+  .markdown > * + * {
+    margin-top: 1.25em;
+  }
+
+  .markdown > :first-child {
+    margin-top: 0;
+  }
+
+  .markdown h2,
+  .markdown h3,
+  .markdown h4 {
+    color: #fff;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-top: 2em;
+  }
+
+  .markdown h2 {
+    font-size: 1.5em;
+  }
+
+  .markdown h3 {
+    font-size: 1.25em;
+  }
+
+  .markdown h4 {
+    font-size: 1.05em;
+  }
+
+  .markdown :is(h2, h3, h4) + * {
+    margin-top: 0.75em;
+  }
+
+  .markdown strong {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .markdown a {
+    color: var(--color-codeAccent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+
+  .markdown a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .markdown ul,
+  .markdown ol {
+    padding-left: 1.4em;
+  }
+
+  .markdown ul {
+    list-style: disc;
+  }
+
+  .markdown ol {
+    list-style: decimal;
+  }
+
+  .markdown li + li {
+    margin-top: 0.4em;
+  }
+
+  .markdown li::marker {
+    color: var(--color-codeAccent);
+  }
+
+  .markdown blockquote {
+    border-left: 2px solid rgb(124 58 237 / 0.6);
+    padding-left: 1em;
+    color: rgb(255 255 255 / 0.7);
+    font-style: italic;
+  }
+
+  .markdown hr {
+    border: 0;
+    border-top: 1px solid rgb(255 255 255 / 0.1);
+    margin-block: 2.5em;
+  }
+
+  .markdown img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+  }
+
+  .markdown :not(pre) > code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: rgb(124 58 237 / 0.16);
+    color: #e9d5ff;
+    border-radius: 0.375rem;
+    padding: 0.15em 0.4em;
+  }
+
+  .md-table {
+    overflow-x: auto;
+  }
+
+  .md-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+  }
+
+  .md-table :is(th, td) {
+    border: 1px solid rgb(255 255 255 / 0.1);
+    padding: 0.5em 0.75em;
+    text-align: left;
+  }
+
+  .md-table th {
+    color: #fff;
+    background: rgb(255 255 255 / 0.04);
+  }
+
+  .md-code {
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 0.75rem;
+    background: var(--color-surface-base);
+    overflow: hidden;
+  }
+
+  .md-code-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.35rem 0.5rem 0.35rem 1rem;
+    background: rgb(124 58 237 / 0.1);
+    border-bottom: 1px solid rgb(255 255 255 / 0.06);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: rgb(255 255 255 / 0.65);
+  }
+
+  .md-code-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2rem;
+    padding: 0 0.6rem;
+    border-radius: 0.375rem;
+    color: rgb(255 255 255 / 0.75);
+  }
+
+  .md-code-copy:hover {
+    background: rgb(255 255 255 / 0.08);
+    color: #fff;
+  }
+
+  .md-code pre {
+    overflow-x: auto;
+    padding: 1rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: #e5e7eb;
+    tab-size: 2;
+  }
+
+  .markdown-article > * + * {
+    margin-top: 1.4em;
+  }
+
+  .markdown-article :is(h2, h3, h4) {
+    margin-top: 2.2em;
+  }
+
+  .markdown-article :is(h2, h3, h4) + * {
+    margin-top: 0.7em;
+  }
+
+  .markdown-article .md-code,
+  .markdown-article .md-table {
+    font-size: 1rem;
+  }
+
+  .markdown-article .md-code pre {
+    font-size: 0.9375rem;
+  }
+
+  .markdown-comment {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: rgb(255 255 255 / 0.8);
+  }
+
+  .markdown-comment > * + * {
+    margin-top: 0.75em;
+  }
+
+  .markdown-comment .md-code pre {
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-meta .hljs-keyword,
+  .hljs-doctag {
+    color: #c084fc;
+  }
+
+  .hljs-title,
+  .hljs-title.function_,
+  .hljs-section {
+    color: #fef08a;
+  }
+
+  .hljs-string,
+  .hljs-regexp,
+  .hljs-template-tag,
+  .hljs-addition {
+    color: #fdba74;
+  }
+
+  .hljs-type,
+  .hljs-title.class_,
+  .hljs-built_in,
+  .hljs-symbol {
+    color: #86efac;
+  }
+
+  .hljs-attr,
+  .hljs-attribute,
+  .hljs-property,
+  .hljs-variable,
+  .hljs-params,
+  .hljs-name {
+    color: #93c5fd;
+  }
+
+  .hljs-number,
+  .hljs-literal,
+  .hljs-selector-class,
+  .hljs-selector-id {
+    color: #fed7aa;
+  }
+
+  .hljs-comment,
+  .hljs-quote {
+    color: #8b93a3;
+    font-style: italic;
+  }
+
+  .hljs-deletion {
+    color: #fca5a5;
+  }
+
+  .hljs-meta {
+    color: #67e8f9;
   }
 }

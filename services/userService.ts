@@ -1,66 +1,20 @@
-import { LoginResponse } from "../types/LoginResponse";
-import { User } from "../types/user";
-import axios from "axios";
-import config from "@/lib/config";
+import { api } from "@/lib/api";
+import { User } from "@/types/user";
 
-const API_URL = `${config.apiUrl}${config.api.users}`;
+export const loginUser = async (email: string, password: string) =>
+  (await api.post<{ user: User }>("/api/users/login", { email, password })).data.user;
 
-export const loginUser = async (
-    email: string,
-    password: string
-): Promise<LoginResponse | { error: string }> => {
-    try {
-        const response = await axios.post(`${API_URL}/login`, { email, password });
-        return response.data;
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            if (error.response?.data?.error) {
-                return { error: error.response.data.error };
-            }
-            if (error.response?.status === 400) {
-                return { error: "Credenciales incorrectas" };
-            }
-        }
-        return { error: "Error al intentar iniciar sesión" };
-    }
+export const logoutUser = async () => {
+  await api.post("/api/users/logout");
 };
 
-export const registerUser = async (userData: Partial<User>): Promise<User | null> => {
-    try {
-        const response = await axios.post(`${API_URL}/register`, userData);
-        return response.data.user as User;
-    } catch {
-        return null;
-    }
-};
+export const registerUser = async (userData: Partial<User>) =>
+  (await api.post<{ user: User }>("/api/users/register", userData)).data.user;
 
-export const getUserProfile = async (token: string): Promise<User | null> => {
-    try {
-        const response = await axios.get(`${API_URL}/profile`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        return response.data.user as User;
-    } catch {
-        return null;
-    }
-};
+export const getUserProfile = async () => (await api.get<{ user: User }>("/api/users/profile")).data.user;
 
-export const validateEmail = async (email: string): Promise<boolean> => {
-    try {
-        const response = await axios.post(`${API_URL}/validate-email`, { email });
-        return response.data as boolean;
-    } catch {
-        return false;
-    }
-};
+export const isEmailRegistered = async (email: string) =>
+  (await api.post<{ isEmailRegistered: boolean }>("/api/users/validate-email", { email })).data.isEmailRegistered;
 
-export const updateUser = async (token: string, userId: string, userData: Partial<User>): Promise<User | null> => {
-    try {
-        const response = await axios.put(`${API_URL}/update/${userId}`, userData, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        return response.data;
-    } catch {
-        return null;
-    }
-};
+export const updateUser = async (userId: string, userData: Partial<User>) =>
+  (await api.put<User>(`/api/users/update/${userId}`, userData)).data;

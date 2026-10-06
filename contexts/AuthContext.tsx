@@ -1,225 +1,105 @@
 "use client";
 
-import {
-  createContext,
-  useState,
-  useEffect,
-  ReactNode,
-  useCallback,
-} from "react";
+import { createContext, useState, useEffect, useRef, ReactNode } from "react";
+import { isAxiosError } from "axios";
+import { toast } from "sonner";
+import { api, getErrorMessage } from "@/lib/api";
+import { revalidatePosts } from "@/app/actions";
 import {
   loginUser as loginService,
-  registerUser as registerService,
-  getUserProfile as getUserProfileService,
+  logoutUser as logoutService,
+  getUserProfile,
   updateUser as updateUserService,
-} from "../services/userService";
-import { User } from "../types/user";
-import { toast } from "sonner";
-import { LoginResponse } from "@/types/LoginResponse";
+} from "@/services/userService";
+import { User } from "@/types/user";
 
 export type AuthStatus = "authenticated" | "unauthenticated" | "loading";
 
 export interface AuthContextType {
   user: User | null;
-  token: string | null;
-  isLoading: boolean;
   status: AuthStatus;
-  error: string | null;
-  loginUser: (email: string, password: string) => Promise<boolean>;
-  registerUser: (userData: Partial<User>) => Promise<boolean>;
+  loginUser: (email: string, password: string) => Promise<string | null>;
   updateUser: (userData: Partial<User>) => Promise<boolean>;
-  logoutUser: () => void;
-  refreshUserProfile: () => Promise<void>;
+  logoutUser: () => Promise<boolean>;
 }
 
-export const AuthContext = createContext<AuthContextType>({
-  user: null,
-  token: null,
-  isLoading: true,
-  status: "loading",
-  error: null,
-  loginUser: async () => false,
-  registerUser: async () => false,
-  updateUser: async () => false,
-  logoutUser: () => {},
-  refreshUserProfile: async () => {},
-});
+export const AuthContext = createContext<AuthContextType | null>(null);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
+const isUnauthorized = (error: unknown) => isAxiosError(error) && error.response?.status === 401;
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState<AuthStatus>("loading");
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchProfile = useCallback(async (authToken: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const profile = await getUserProfileService(authToken);
-
-      if (profile) {
-        setUser(profile);
-        setStatus("authenticated");
-      } else {
-        setUser(null);
-        setToken(null);
-        setStatus("unauthenticated");
-        localStorage.removeItem("token");
-        toast.error("Sesión expirada");
-      }
-    } catch {
-      setUser(null);
-      setToken(null);
-      setStatus("unauthenticated");
-      setError("Error al obtener el perfil");
-      localStorage.removeItem("token");
-      toast.error("Error al obtener el perfil");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const refreshUserProfile = async () => {
-    if (token) {
-      await fetchProfile(token);
-    }
-  };
+  const statusRef = useRef(status);
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const storedToken = localStorage.getItem("token");
-        if (storedToken) {
-          setToken(storedToken);
-          await fetchProfile(storedToken);
-        } else {
-          setStatus("unauthenticated");
-          setIsLoading(false);
-        }
-      } catch {
+    statusRef.current = status;
+  }, [status]);
+
+  useEffect(() => {
+    const interceptor = api.interceptors.response.use(undefined, (error) => {
+      if (isUnauthorized(error) && statusRef.current === "authenticated") {
+        setUser(null);
         setStatus("unauthenticated");
-        setIsLoading(false);
-        localStorage.removeItem("token");
+        toast.error("Tu sesión expiró. Inicia sesión de nuevo.");
       }
-    };
+      return Promise.reject(error);
+    });
+    return () => api.interceptors.response.eject(interceptor);
+  }, []);
 
-    initializeAuth();
-  }, [fetchProfile]);
-
-  const loginUser = async (email: string, password: string): Promise<boolean> => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const response = await loginService(email, password);
-
-      if ("error" in response) {
-        setError(response.error);
-        toast.error(response.error);
-        return false;
-      }
-
-      const { token: loginToken, user: loggedUser } = response as LoginResponse;
-      if (loginToken && loggedUser) {
-        localStorage.setItem("token", loginToken);
-        setToken(loginToken);
-        setUser(loggedUser);
+  useEffect(() => {
+    getUserProfile()
+      .then((profile) => {
+        setUser(profile);
         setStatus("authenticated");
-        toast.success("Inicio de sesión exitoso");
-        return true;
-      }
+      })
+      .catch((error) => {
+        setStatus("unauthenticated");
+        if (!isUnauthorized(error)) toast.error("No pudimos conectar con el servidor para recuperar tu sesión");
+      });
+  }, []);
 
-      setError("Error inesperado al iniciar sesión");
-      toast.error("Error inesperado al iniciar sesión");
-      return false;
-    } catch {
-      setError("Error al conectar con el servidor");
-      toast.error("Error al conectar con el servidor");
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const registerUser = async (userData: Partial<User>): Promise<boolean> => {
+  const loginUser = async (email: string, password: string) => {
     try {
-      setIsLoading(true);
-      setError(null);
-      const res = await registerService(userData);
-      if (res) {
-        toast.success("Registro exitoso");
-        return true;
-      }
-      setError("Error en el registro");
-      toast.error("Error al registrar usuario");
-      return false;
-    } catch {
-      setError("Error en el registro");
-      toast.error("Error al registrar usuario");
-      return false;
-    } finally {
-      setIsLoading(false);
+      setUser(await loginService(email, password));
+      setStatus("authenticated");
+      return null;
+    } catch (error) {
+      const message = getErrorMessage(error, "Error al iniciar sesión");
+      toast.error(message);
+      return message;
     }
   };
 
-  const updateUser = async (userData: Partial<User>): Promise<boolean> => {
+  const updateUser = async (userData: Partial<User>) => {
+    if (!user?._id) return false;
     try {
-      setIsLoading(true);
-      setError(null);
-
-      if (!token || !user?._id) {
-        toast.error("Sesión expirada");
-        return false;
-      }
-
-      const updatedUser = await updateUserService(token, user._id, userData);
-
-      if (updatedUser) {
-        setUser(updatedUser);
-        toast.success("Perfil actualizado exitosamente");
-        return true;
-      }
-
-      setError("Error al actualizar el perfil");
-      toast.error("Error al actualizar el perfil");
+      setUser(await updateUserService(user._id, userData));
+      toast.success("Perfil actualizado exitosamente");
+      await revalidatePosts();
+      return true;
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Error al actualizar el perfil"));
       return false;
-    } catch {
-      setError("Error al actualizar el perfil");
-      toast.error("Error al actualizar el perfil");
-      return false;
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  const logoutUser = () => {
-    localStorage.removeItem("token");
-    setToken(null);
+  const logoutUser = async () => {
+    try {
+      await logoutService();
+    } catch (error) {
+      toast.error(getErrorMessage(error, "No pudimos cerrar la sesión. Inténtalo de nuevo."));
+      return false;
+    }
     setUser(null);
     setStatus("unauthenticated");
-    setError(null);
     toast.success("Sesión cerrada exitosamente");
+    return true;
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        isLoading,
-        status,
-        error,
-        loginUser,
-        registerUser,
-        updateUser,
-        logoutUser,
-        refreshUserProfile,
-      }}
-    >
+    <AuthContext.Provider value={{ user, status, loginUser, updateUser, logoutUser }}>
       {children}
     </AuthContext.Provider>
   );

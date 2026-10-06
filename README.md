@@ -15,13 +15,11 @@ Plataforma web para compartir y discutir posts sobre programación. Los usuarios
 
 | Capa | Tecnología |
 |---|---|
-| Framework | Next.js 15 (App Router) + TypeScript |
-| Estilos | Tailwind CSS + Radix UI |
-| Animaciones | Framer Motion |
-| Formularios | React Hook Form + Zod |
+| Framework | Next.js 16 (App Router) + React 19 + TypeScript |
+| Estilos | Tailwind CSS 4 + Radix UI |
+| Formularios | React Hook Form + Zod 4 |
 | HTTP | Axios |
 | Notificaciones | Sonner |
-| Temas | next-themes (dark/light) |
 
 ## Páginas
 
@@ -33,6 +31,24 @@ Plataforma web para compartir y discutir posts sobre programación. Los usuarios
 /posts             Feed de posts
 /posts/[id]        Detalle de un post con comentarios
 /posts/createpost  Crear post y gestionar los propios
+```
+
+## Estructura
+
+```
+app/            Rutas (App Router) y server actions
+components/
+  auth/         Login, registro, perfil
+  comments/     Formulario y acciones de comentarios
+  home/         Secciones de la portada
+  layout/       Navbar y footer
+  posts/        Listado, detalle, editor y "Mis posts"
+  shared/       Markdown, paginación, avatar
+  ui/           Componentes base (shadcn/ui)
+contexts/       Estado de sesión (AuthContext)
+lib/            Utilidades; lib/server para datos en el servidor
+services/       Llamadas a la API desde el navegador
+types/          Tipos compartidos
 ```
 
 ## Instalación local
@@ -53,5 +69,5 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 ### Variables de entorno
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000
+API_URL=http://localhost:5000
 ```
