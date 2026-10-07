@@ -45,7 +45,7 @@ const UserPosts = ({ posts, page, editingId, onEdit, onDeleted }: UserPostsProps
       onDeleted(post._id);
       await revalidatePosts();
     } catch (error) {
-      toast.error(getErrorMessage(error, "Error al eliminar el post"));
+      toast.error(getErrorMessage(error, "No se pudo eliminar el post"));
     }
   };
 

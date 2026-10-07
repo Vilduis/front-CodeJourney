@@ -2,6 +2,7 @@ import { api } from "@/lib/api";
 import { Comment } from "@/types/comment";
 
 export const MIN_COMMENT_LENGTH = 2;
+export const COMMENT_TOO_SHORT = `El comentario debe tener al menos ${MIN_COMMENT_LENGTH} caracteres`;
 
 export const createComment = async (postId: string, content: string) =>
   (await api.post<{ newComment: Comment }>(`/api/comments/create/${postId}`, { content })).data.newComment;

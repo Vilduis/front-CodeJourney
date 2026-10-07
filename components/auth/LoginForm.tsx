@@ -14,7 +14,7 @@ import AuthShell from "@/components/auth/AuthShell";
 import { CodeLine, SYNTAX as S } from "@/components/shared/EditorWindow";
 
 const formSchema = z.object({
-  email: z.email("Escribe un email válido, por ejemplo nombre@ejemplo.com"),
+  email: z.email("Escribe un email válido"),
   password: z.string().min(8, "La contraseña tiene al menos 8 caracteres"),
 });
 
@@ -45,7 +45,7 @@ export default function LoginForm({ redirectTo }: { redirectTo: string }) {
       form.setError("root", { message: error });
       return;
     }
-    toast.success("Inicio de sesión exitoso");
+    toast.success("Sesión iniciada");
   }
 
   const formErrors = form.formState.errors;

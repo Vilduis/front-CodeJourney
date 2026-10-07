@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { Post } from "@/types/post";
 
-const API_URL = process.env.API_URL || "http://localhost:5000";
+const API_URL = (process.env.API_URL || "http://localhost:5000").replace(/\/+$/, "");
 
 export const POSTS_TAG = "posts";
 

@@ -27,6 +27,16 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 const isUnauthorized = (error: unknown) => isAxiosError(error) && error.response?.status === 401;
 
+const isTransient = (error: unknown) =>
+  isAxiosError(error) && (!error.response || error.response.status >= 500);
+
+const fetchProfileWithRetry = () =>
+  getUserProfile().catch(async (error) => {
+    if (!isTransient(error)) throw error;
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    return getUserProfile();
+  });
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<AuthStatus>("loading");
@@ -41,7 +51,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (isUnauthorized(error) && statusRef.current === "authenticated") {
         setUser(null);
         setStatus("unauthenticated");
-        toast.error("Tu sesión expiró. Inicia sesión de nuevo.");
       }
       return Promise.reject(error);
     });
@@ -49,14 +58,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    getUserProfile()
+    fetchProfileWithRetry()
       .then((profile) => {
         setUser(profile);
         setStatus("authenticated");
       })
       .catch((error) => {
         setStatus("unauthenticated");
-        if (!isUnauthorized(error)) toast.error("No pudimos conectar con el servidor para recuperar tu sesión");
+        if (!isUnauthorized(error)) toast.error("No se pudo conectar con el servidor");
       });
   }, []);
 
@@ -66,9 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setStatus("authenticated");
       return null;
     } catch (error) {
-      const message = getErrorMessage(error, "Error al iniciar sesión");
-      toast.error(message);
-      return message;
+      return getErrorMessage(error, "No se pudo iniciar sesión");
     }
   };
 
@@ -76,11 +83,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!user?._id) return false;
     try {
       setUser(await updateUserService(user._id, userData));
-      toast.success("Perfil actualizado exitosamente");
+      toast.success("Perfil actualizado");
       await revalidatePosts();
       return true;
     } catch (error) {
-      toast.error(getErrorMessage(error, "Error al actualizar el perfil"));
+      toast.error(getErrorMessage(error, "No se pudo actualizar el perfil"));
       return false;
     }
   };
@@ -89,12 +96,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await logoutService();
     } catch (error) {
-      toast.error(getErrorMessage(error, "No pudimos cerrar la sesión. Inténtalo de nuevo."));
+      toast.error(getErrorMessage(error, "No se pudo cerrar la sesión"));
       return false;
     }
     setUser(null);
     setStatus("unauthenticated");
-    toast.success("Sesión cerrada exitosamente");
+    toast.success("Sesión cerrada");
     return true;
   };
 

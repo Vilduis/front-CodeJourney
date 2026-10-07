@@ -63,7 +63,7 @@ const PostForm = ({
 
   const handleImage = async (file: File) => {
     if (file.size > MAX_IMAGE_SIZE) {
-      setImageError("La imagen no puede superar los 5 MB.");
+      setImageError("La imagen no puede superar 5 MB");
       return;
     }
 
@@ -76,7 +76,7 @@ const PostForm = ({
         return;
       }
     } catch {
-      setImageError("No pudimos leer la imagen. Prueba con otro archivo JPG, PNG, WEBP o GIF.");
+      setImageError("No se pudo leer la imagen. Usa JPG, PNG, WEBP o GIF");
       return;
     }
 
@@ -94,12 +94,12 @@ const PostForm = ({
     e.preventDefault();
 
     if (!image && !initialImage) {
-      setImageError("Elige una imagen de portada para tu post.");
+      setImageError("Elige una imagen de portada");
       document.getElementById(coverId)?.focus();
       return;
     }
     if (content.trim().length < MIN_CONTENT_LENGTH) {
-      setContentError("Escribe el contenido de tu post (al menos 2 caracteres).");
+      setContentError("El contenido debe tener al menos 2 caracteres");
       document.getElementById(contentId)?.focus();
       return;
     }

@@ -20,7 +20,7 @@ const formSchema = z
   .object({
     name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
     lastName: z.string().min(2, "El apellido debe tener al menos 2 caracteres"),
-    email: z.email("Escribe un email válido, por ejemplo nombre@ejemplo.com"),
+    email: z.email("Escribe un email válido"),
     password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
     confirmPassword: z.string(),
   })
@@ -73,15 +73,12 @@ export default function RegisterForm({ redirectTo }: { redirectTo: string }) {
 
       await registerUser({ name, lastName, email, password });
     } catch (error) {
-      toast.error(getErrorMessage(error, "No pudimos crear tu cuenta. Inténtalo de nuevo."));
+      toast.error(getErrorMessage(error, "No se pudo crear la cuenta"));
       return;
     }
 
-    if (await loginUser(email, password)) {
-      router.push(withNext("/login", redirectTo));
-      return;
-    }
-    toast.success("Cuenta creada. ¡Bienvenido a CodeJourney!");
+    toast.success("Cuenta creada");
+    if (await loginUser(email, password)) router.push(withNext("/login", redirectTo));
   }
 
   return (

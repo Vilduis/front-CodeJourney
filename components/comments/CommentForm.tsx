@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { revalidatePosts } from "@/app/actions";
-import { createComment, MIN_COMMENT_LENGTH } from "@/services/commentService";
+import { createComment, MIN_COMMENT_LENGTH, COMMENT_TOO_SHORT } from "@/services/commentService";
 import { getErrorMessage } from "@/lib/api";
 import { withNext } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -35,7 +35,7 @@ const CommentForm = ({ postId }: { postId: string }) => {
     e.preventDefault();
     const content = comment.trim();
     if (content.length < MIN_COMMENT_LENGTH) {
-      toast.error(`El comentario debe tener al menos ${MIN_COMMENT_LENGTH} caracteres`);
+      toast.error(COMMENT_TOO_SHORT);
       return;
     }
 
@@ -46,7 +46,7 @@ const CommentForm = ({ postId }: { postId: string }) => {
       toast.success("Comentario publicado");
       await revalidatePosts();
     } catch (error) {
-      toast.error(getErrorMessage(error, "Error al añadir el comentario"));
+      toast.error(getErrorMessage(error, "No se pudo publicar el comentario"));
     } finally {
       setIsSubmitting(false);
     }

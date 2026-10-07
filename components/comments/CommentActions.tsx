@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Pencil, Trash2 } from "lucide-react";
 import { revalidatePosts } from "@/app/actions";
-import { updateComment, deleteComment, MIN_COMMENT_LENGTH } from "@/services/commentService";
+import { updateComment, deleteComment, MIN_COMMENT_LENGTH, COMMENT_TOO_SHORT } from "@/services/commentService";
 import { getErrorMessage } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -60,16 +60,16 @@ const CommentActions = ({ commentId, authorId, content }: CommentActionsProps) =
   const handleEdit = async () => {
     const next = draft?.trim() ?? "";
     if (next.length < MIN_COMMENT_LENGTH) {
-      toast.error(`El comentario debe tener al menos ${MIN_COMMENT_LENGTH} caracteres`);
+      toast.error(COMMENT_TOO_SHORT);
       return;
     }
-    if (await run(() => updateComment(commentId, next), "Comentario actualizado", "Error al actualizar el comentario")) {
+    if (await run(() => updateComment(commentId, next), "Comentario actualizado", "No se pudo actualizar el comentario")) {
       setDraft(null);
     }
   };
 
   const handleDelete = () =>
-    run(() => deleteComment(commentId), "Comentario eliminado", "Error al eliminar el comentario");
+    run(() => deleteComment(commentId), "Comentario eliminado", "No se pudo eliminar el comentario");
 
   return (
     <div className="flex gap-1">

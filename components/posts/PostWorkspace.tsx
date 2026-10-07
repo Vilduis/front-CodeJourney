@@ -38,7 +38,7 @@ const PostWorkspace = ({ posts, page }: { posts: Post[]; page: number }) => {
       await revalidatePosts();
       router.push(`/posts/${post._id}`);
     } catch (error) {
-      toast.error(getErrorMessage(error, "No pudimos publicar tu post. Inténtalo de nuevo."));
+      toast.error(getErrorMessage(error, "No se pudo publicar el post"));
     }
   };
 
@@ -50,7 +50,7 @@ const PostWorkspace = ({ posts, page }: { posts: Post[]; page: number }) => {
       stopEditing();
       await revalidatePosts();
     } catch (error) {
-      toast.error(getErrorMessage(error, "No pudimos guardar los cambios. Inténtalo de nuevo."));
+      toast.error(getErrorMessage(error, "No se pudieron guardar los cambios"));
     }
   };
 
